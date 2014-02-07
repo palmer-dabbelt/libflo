@@ -55,6 +55,13 @@ static bool need_o_match(const node_ptr o, int i, int j);
 /* Upgrades an operation to the version with a known width. */
 static node_ptr upgrade(node_ptr u);
 
+/* This is used for the final pass: once all the node widths are known
+ * we need to re-map them to produce actual operation widths.  For
+ * example, the first phase will always produce "gte/1" because the
+ * output of gte is always a boolean: this instead converts gte to the
+ * width of its inputs. */
+static node_ptr remap(node_ptr o, const known_map &map);
+
 const node_list libflo::infer_widths(const node_list &ops_in)
 {
     node_list out;
@@ -285,7 +292,11 @@ const node_list libflo::infer_widths(const node_list &ops_in)
         abort();
     }
 
-    return out;
+    node_list remapped;
+    for (auto it = out.nodes(); !it.done(); ++it)
+        remapped.add(remap(*it, known));
+
+    return remapped;
 }
 
 bool know_d_width(const node_ptr o)
@@ -544,4 +555,61 @@ bool need_o_match(const node_ptr o, int i, int j)
 node_ptr upgrade(node_ptr u)
 {
     return u;
+}
+
+node_ptr remap(node_ptr o, const known_map &map)
+{
+    switch (o->opcode()) {
+        /* These operations match the input width fine and don't need
+         * modification. */
+    case opcode::MUX:
+    case opcode::ADD:
+    case opcode::AND:
+    case opcode::MOV:
+    case opcode::OUT:
+    case opcode::REG:
+    case opcode::RST:
+        return o;
+
+        /* The destination is boolean, but the operation still has a
+         * width.  This means we need to look up a source (all are the
+         * same). */
+    case opcode::EQ:
+    case opcode::GTE:
+    case opcode::LT:
+    {
+        auto l = map.find(o->s(0));
+        if (l == map.end()) {
+            fprintf(stderr, "Attempted to remap unmapped node '%s'\n",
+                    o->s(0).c_str());
+            abort();
+        }
+        return o->with_width(l->second->width());
+    }
+
+    case opcode::EAT:
+    case opcode::RND:
+    case opcode::SUB:
+    case opcode::NOT:
+    case opcode::OR:
+    case opcode::IN:
+    case opcode::LIT:
+    case opcode::CAT:
+    case opcode::RSH:
+    case opcode::MSK:
+    case opcode::LD:
+    case opcode::NEQ:
+    case opcode::ARSH:
+    case opcode::LSH:
+    case opcode::XOR:
+    case opcode::ST:
+    case opcode::MEM:
+        fprintf(stderr, "Unknown opcode '%s' in remap()\n",
+                opcode_to_string(o->opcode()).c_str());
+        abort();
+        break;
+    }
+
+    fprintf(stderr, "unhandled switch case\n");
+    abort();
 }

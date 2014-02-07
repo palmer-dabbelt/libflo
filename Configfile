@@ -17,3 +17,4 @@ SOURCES     += infer_widths.c++
 TESTSRC     += counter-5.bash
 TESTSRC     += counter-16.bash
 TESTSRC     += counter-32.bash
+TESTSRC     += mod_counter.bash
