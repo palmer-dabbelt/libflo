@@ -23,6 +23,7 @@
 #define LIBFLO__OPWIDTHP_HXX
 
 #include "opcode.h++"
+#include <stdio.h>
 #include <string>
 
 namespace libflo {
@@ -44,7 +45,14 @@ namespace libflo {
         opwidthp(enum opcode opcode, unsigned width);
 
         bool has_width(void) const { return _has_width; }
-        unsigned width(void) const { if (!_has_width) abort(); return _width; }
+        unsigned width(void) const
+            {
+                if (!_has_width) {
+                    fprintf(stderr, "width() on unknown width\n");
+                    abort();
+                }
+                return _width;
+            }
         enum opcode opcode(void) const { return _opcode; }
 
         const std::string to_string(void) const;

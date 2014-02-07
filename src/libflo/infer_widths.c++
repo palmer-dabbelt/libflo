@@ -107,6 +107,7 @@ const node_list libflo::infer_widths(const node_list &ops_in)
                 auto o = ops.front(); ops.pop();
                 fprintf(stderr, "  node '%s' remains\n", o->d().c_str());
             }
+            fprintf(stderr, "Aborting due uninferrable widths\n");
             abort();
         }
 
@@ -128,6 +129,11 @@ const node_list libflo::infer_widths(const node_list &ops_in)
                 known.insert(known_pair(kw->d(), kw));
                 did_work = true;
             }
+
+#ifdef DEBUG_WIDTH_INFERENCE
+            fprintf(stderr, "known D width: '%s' of %u\n",
+                    wid->d().c_str(), wid->width());
+#endif
         }
 
         /* If we somehow already managed to infer the width of this
@@ -175,21 +181,31 @@ const node_list libflo::infer_widths(const node_list &ops_in)
 
                 /* This can't happen because we either found the node
                  * or just stored it. */
-                if (kcopl == known.end())
+                if (kcopl == known.end()) {
+                    fprintf(stderr, "op wasn't stored\n");
                     abort();
+                }
 
                 /* We need to ensure that the width we just inferred
                  * matches the width that was previously inferred --
                  * otherwise there is some sort of bug somewhere... */
                 auto kcop = kcopl->second;
-                if (kcop->width() != get_s_width(o, i)) {
-                    fprintf(stderr, "Mismatched width\n");
-                    fprintf(stderr, "'%s' had inferred width of %d\n",
-                            kcop->d().c_str(), kcop->width());
-                    fprintf(stderr, "'%s' requires width of %d\n",
-                            o->d().c_str(), get_s_width(o, i));
-                    abort();
+                if (know_s_width(o, i)) {
+                    if (kcop->width() != get_s_width(o, i)) {
+                        fprintf(stderr, "Mismatched width\n");
+                        fprintf(stderr, "'%s' had inferred width of %d\n",
+                                kcop->d().c_str(), kcop->width());
+                        fprintf(stderr, "'%s' requires width of %d\n",
+                                o->d().c_str(), get_s_width(o, i));
+                        abort();
+                    }
                 }
+
+#ifdef DEBUG_WIDTH_INFERENCE
+                fprintf(stderr, "known S width: '%s' of %u in ",
+                        kcop->d().c_str(), kcop->width());
+                o->writeln(stderr);
+#endif
             }
         }
 
@@ -240,6 +256,14 @@ const node_list libflo::infer_widths(const node_list &ops_in)
                     out.add(kw);
                     known.insert(known_pair(kw->d(), kw));
                     did_work = true;
+
+#ifdef DEBUG_WIDTH_INFERENCE
+                    fprintf(stderr,
+                            "inferred O width: '%s' of %u (matches '%s') in ",
+                            o->o(i).c_str(), kw->width(),
+                            o->o(j).c_str());
+                    o->writeln(stderr);
+#endif
                 } else {
                 }
             }
@@ -309,6 +333,8 @@ bool know_d_width(const node_ptr o)
         break;
     }
 
+    fprintf(stderr, "Opcode '%s' not handled in know_d_width()\n",
+            opcode_to_string(o->opcode()).c_str());
     abort();
     return false;
 }
@@ -353,6 +379,8 @@ unsigned get_d_width(const node_ptr o)
         break;
     }
 
+    fprintf(stderr, "Opcode '%s' not handled in get_d_width()\n",
+            opcode_to_string(o->opcode()).c_str());
     abort();
     return -1;
 }
@@ -406,6 +434,8 @@ bool know_s_width(const node_ptr o, int i)
         break;
     }
 
+    fprintf(stderr, "Opcode '%s' not handled in know_s_width()\n",
+            opcode_to_string(o->opcode()).c_str());
     abort();
     return false;
 }
@@ -452,6 +482,8 @@ unsigned get_s_width(const node_ptr o, int i)
         break;
     }
 
+    fprintf(stderr, "Opcode '%s' not handled in get_s_width()\n",
+            opcode_to_string(o->opcode()).c_str());
     abort();
     return -1;
 }
