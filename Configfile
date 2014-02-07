@@ -1,0 +1,16 @@
+LANGUAGES   += c++
+COMPILEOPTS += -Wall
+COMPILEOPTS += -Wextra
+COMPILEOPTS += -Werror
+COMPILEOPTS += -std=c++11
+COMPILEOPTS += -pedantic
+
+LANGUAGES   += bash
+
+LIBRARIES   += libflo.so
+SOURCES     += libflo/parse.c++
+
+BINARIES    += flo-infer-widths
+DEPLIBS     += flo
+SOURCES     += infer_widths.c++
+TESTSRC     += counter-32.bash
