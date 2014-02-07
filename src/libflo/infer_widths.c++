@@ -251,7 +251,7 @@ const node_list libflo::infer_widths(const node_list &ops_in)
 
                     /* Stick that other operation in the big list of
                      * known operations. */
-                    auto wid = u->with_width(get_s_width(o, i));
+                    auto wid = u->with_width(k->width());
                     auto kw = upgrade(wid);
                     out.add(kw);
                     known.insert(known_pair(kw->d(), kw));
