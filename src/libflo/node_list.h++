@@ -54,6 +54,9 @@ namespace libflo {
         /* Creates a new, empty, node list. */
         node_list(void);
 
+        /* Returns the size of this node list. */
+        size_t size(void) const { return _nodes.size(); }
+
         /* Adds a node to this list, in an unspecified order. */
         node_ptr add(node_ptr a);
 

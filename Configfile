@@ -9,6 +9,7 @@ LANGUAGES   += bash
 
 LIBRARIES   += libflo.so
 SOURCES     += libflo/parse.c++
+SOURCES     += libflo/infer_widths.c++
 
 BINARIES    += flo-infer-widths
 DEPLIBS     += flo

@@ -58,10 +58,35 @@ namespace libflo {
              const std::string s0,
              const std::string s1,
              const std::string s2);
+
+        /* Effectively a copy constructor, but you can replace some
+         * parts. */
+        node(const std::string d,
+             opwidthp op,
+             const std::vector<std::string> s);
         
     public:
+        /* Accessor functions. */
+        const std::string d(void) const { return _d; }
+        const opwidthp op(void) const { return _op; }
+        const std::vector<std::string> s(void) const { return _s; }
+
+        const std::vector<std::string>::const_iterator s_begin(void)
+            { return _s.begin(); }
+        const std::vector<std::string>::const_iterator s_end(void)
+            { return _s.end(); }
+
+        const std::string s(size_t i) { return _s[i]; }
+        const std::string o(size_t i) { return (i == 0) ? _d : _s[i-1]; }
+
+        enum opcode opcode(void) { return _op.opcode(); }
+        unsigned width(void) { return _op.width(); }
+
         /* Writes this node to a file with a newline at the end. */
         void writeln(FILE *f);
+
+        /* Returns a new node with the width parameter set. */
+        node_ptr with_width(unsigned width) const;
 
     public:
         /* Parses a node, given a string that represents that node. */

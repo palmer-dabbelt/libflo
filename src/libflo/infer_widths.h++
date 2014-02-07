@@ -19,18 +19,13 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <libflo/parse.h++>
-#include <libflo/infer_widths.h++>
+#include "node_list.h++"
 
-int main(int argc, const char **argv)
-{
-    if (argc <= 1 || argc > 2) {
-        fprintf(stderr, "%s <flo>: infer widths for a flo file\n", argv[0]);
-    }
-
-    auto ukw = libflo::parse(argv[1]);
-    auto kw = libflo::infer_widths(ukw);
-
-    for (auto it = kw.nodes(); !it.done(); ++it)
-        (*it)->writeln(stdout);
+namespace libflo {
+    /* Performs width inference on a list of nodes.  Chisel's Flo
+     * backend doesn't attach a width to every node, but we really
+     * need every node to have a width before anything interesting can
+     * be done with it.  This outputs a node list where every width is
+     * known, or fails trying to produce one. */
+    const node_list infer_widths(const node_list &some_unknown_widths);
 }

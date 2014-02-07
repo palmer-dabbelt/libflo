@@ -67,12 +67,26 @@ node::node(const std::string d,
 {
 }
 
+node::node(const std::string d,
+           opwidthp op,
+           const std::vector<std::string> s)
+    : _d(d),
+      _op(op),
+      _s(s)
+{
+}
+
 void node::writeln(FILE *f)
 {
     fprintf(f, "%s = %s", _d.c_str(), _op.to_string().c_str());
     for (auto it = _s.begin(); it != _s.end(); ++it)
         fprintf(f, " %s", (*it).c_str());
     fprintf(f, "\n");
+}
+
+node_ptr node::with_width(unsigned width) const
+{
+    return node_ptr(new node(_d, opwidthp(_op.opcode(), width), _s));
 }
 
 node_ptr node::parse(const std::string &line)
