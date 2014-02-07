@@ -14,4 +14,6 @@ SOURCES     += libflo/infer_widths.c++
 BINARIES    += flo-infer-widths
 DEPLIBS     += flo
 SOURCES     += infer_widths.c++
+TESTSRC     += counter-5.bash
+TESTSRC     += counter-16.bash
 TESTSRC     += counter-32.bash
