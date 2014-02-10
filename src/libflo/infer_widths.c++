@@ -320,12 +320,12 @@ bool know_d_width(const node_ptr o)
     case opcode::OR:
     case opcode::OUT:
     case opcode::REG:
+    case opcode::SUB:
         return o->op().has_width();
 
         /* I haven't figured out what these ones do yet... */
     case opcode::EAT:
     case opcode::RND:
-    case opcode::SUB:
     case opcode::IN:
     case opcode::LIT:
     case opcode::CAT:
@@ -367,11 +367,11 @@ unsigned get_d_width(const node_ptr o)
     case opcode::OR:
     case opcode::OUT:
     case opcode::REG:
+    case opcode::SUB:
         return o->op().width();
 
     case opcode::EAT:
     case opcode::RND:
-    case opcode::SUB:
     case opcode::IN:
     case opcode::LIT:
     case opcode::CAT:
@@ -414,6 +414,7 @@ bool know_s_width(const node_ptr o, int i)
     case opcode::OR:
     case opcode::OUT:
     case opcode::REG:
+    case opcode::SUB:
         return o->op().has_width();
 
         /* These operations have a single bit width through all their
@@ -426,7 +427,6 @@ bool know_s_width(const node_ptr o, int i)
 
     case opcode::EAT:
     case opcode::RND:
-    case opcode::SUB:
     case opcode::IN:
     case opcode::LIT:
     case opcode::CAT:
@@ -464,6 +464,7 @@ unsigned get_s_width(const node_ptr o, int i)
     case opcode::OR:
     case opcode::OUT:
     case opcode::REG:
+    case opcode::SUB:
         return o->op().width();
 
     case opcode::EQ:
@@ -474,7 +475,6 @@ unsigned get_s_width(const node_ptr o, int i)
 
     case opcode::EAT:
     case opcode::RND:
-    case opcode::SUB:
     case opcode::IN:
     case opcode::LIT:
     case opcode::CAT:
@@ -515,6 +515,7 @@ bool need_o_match(const node_ptr o, int i, int j)
     case opcode::OR:
     case opcode::OUT:
     case opcode::REG:
+    case opcode::SUB:
         return true;
 
         /* The destination is boolean, but all other operations must
@@ -528,7 +529,6 @@ bool need_o_match(const node_ptr o, int i, int j)
 
     case opcode::EAT:
     case opcode::RND:
-    case opcode::SUB:
     case opcode::IN:
     case opcode::LIT:
     case opcode::CAT:
@@ -571,6 +571,7 @@ node_ptr remap(node_ptr o, const known_map &map)
     case opcode::OUT:
     case opcode::REG:
     case opcode::RST:
+    case opcode::SUB:
         return o;
 
         /* The destination is boolean, but the operation still has a
@@ -591,7 +592,6 @@ node_ptr remap(node_ptr o, const known_map &map)
 
     case opcode::EAT:
     case opcode::RND:
-    case opcode::SUB:
     case opcode::IN:
     case opcode::LIT:
     case opcode::CAT:
