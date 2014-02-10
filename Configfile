@@ -7,9 +7,13 @@ COMPILEOPTS += -pedantic
 
 LANGUAGES   += bash
 
+LANGUAGES   += h
+
 LIBRARIES   += libflo.so
 SOURCES     += libflo/parse.c++
 SOURCES     += libflo/infer_widths.c++
+
+CONFIG      += find_library_headers
 
 BINARIES    += flo-infer-widths
 DEPLIBS     += flo

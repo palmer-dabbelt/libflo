@@ -1,0 +1,8 @@
+#!/bin/bash
+
+cd src/
+find libflo/ -iname "*.h++" | while read f
+do
+    echo "HEADERS += $f"
+    echo "SOURCES += $f"
+done
