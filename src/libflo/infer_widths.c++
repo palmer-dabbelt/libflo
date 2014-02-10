@@ -317,6 +317,7 @@ bool know_d_width(const node_ptr o)
     case opcode::MOV:
     case opcode::MUX:
     case opcode::NOT:
+    case opcode::OR:
     case opcode::OUT:
     case opcode::REG:
         return o->op().has_width();
@@ -325,7 +326,6 @@ bool know_d_width(const node_ptr o)
     case opcode::EAT:
     case opcode::RND:
     case opcode::SUB:
-    case opcode::OR:
     case opcode::IN:
     case opcode::LIT:
     case opcode::CAT:
@@ -364,6 +364,7 @@ unsigned get_d_width(const node_ptr o)
     case opcode::MOV:
     case opcode::MUX:
     case opcode::NOT:
+    case opcode::OR:
     case opcode::OUT:
     case opcode::REG:
         return o->op().width();
@@ -371,7 +372,6 @@ unsigned get_d_width(const node_ptr o)
     case opcode::EAT:
     case opcode::RND:
     case opcode::SUB:
-    case opcode::OR:
     case opcode::IN:
     case opcode::LIT:
     case opcode::CAT:
@@ -411,6 +411,7 @@ bool know_s_width(const node_ptr o, int i)
     case opcode::AND:
     case opcode::MOV:
     case opcode::NOT:
+    case opcode::OR:
     case opcode::OUT:
     case opcode::REG:
         return o->op().has_width();
@@ -426,7 +427,6 @@ bool know_s_width(const node_ptr o, int i)
     case opcode::EAT:
     case opcode::RND:
     case opcode::SUB:
-    case opcode::OR:
     case opcode::IN:
     case opcode::LIT:
     case opcode::CAT:
@@ -461,6 +461,7 @@ unsigned get_s_width(const node_ptr o, int i)
     case opcode::AND:
     case opcode::MOV:
     case opcode::NOT:
+    case opcode::OR:
     case opcode::OUT:
     case opcode::REG:
         return o->op().width();
@@ -474,7 +475,6 @@ unsigned get_s_width(const node_ptr o, int i)
     case opcode::EAT:
     case opcode::RND:
     case opcode::SUB:
-    case opcode::OR:
     case opcode::IN:
     case opcode::LIT:
     case opcode::CAT:
@@ -512,6 +512,7 @@ bool need_o_match(const node_ptr o, int i, int j)
     case opcode::AND:
     case opcode::MOV:
     case opcode::NOT:
+    case opcode::OR:
     case opcode::OUT:
     case opcode::REG:
         return true;
@@ -528,7 +529,6 @@ bool need_o_match(const node_ptr o, int i, int j)
     case opcode::EAT:
     case opcode::RND:
     case opcode::SUB:
-    case opcode::OR:
     case opcode::IN:
     case opcode::LIT:
     case opcode::CAT:
@@ -567,6 +567,7 @@ node_ptr remap(node_ptr o, const known_map &map)
     case opcode::AND:
     case opcode::MOV:
     case opcode::NOT:
+    case opcode::OR:
     case opcode::OUT:
     case opcode::REG:
     case opcode::RST:
@@ -591,7 +592,6 @@ node_ptr remap(node_ptr o, const known_map &map)
     case opcode::EAT:
     case opcode::RND:
     case opcode::SUB:
-    case opcode::OR:
     case opcode::IN:
     case opcode::LIT:
     case opcode::CAT:
