@@ -9,9 +9,12 @@ LANGUAGES   += bash
 
 LANGUAGES   += h
 
+GENERATE    += version.h
+
 LIBRARIES   += libflo.so
 SOURCES     += libflo/parse.c++
 SOURCES     += libflo/infer_widths.c++
+SOURCES     += libflo/version.c++
 
 CONFIG      += find_library_headers
 

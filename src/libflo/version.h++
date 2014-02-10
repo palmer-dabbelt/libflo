@@ -19,27 +19,11 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <libflo/parse.h++>
-#include <libflo/infer_widths.h++>
-#include <libflo/version.h++>
-#include <string.h>
-#include "version.h"
+#ifndef LIBFLO__VERSION_HXX
+#define LIBFLO__VERSION_HXX
 
-int main(int argc, const char **argv)
-{
-    if (argc <= 1 || argc > 2) {
-        fprintf(stderr, "%s <flo>: infer widths for a flo file\n", argv[0]);
-    }
-
-    if (strcmp(argv[1], "--version") == 0) {
-        fprintf(stderr, "%s %s (using libflo %s)\n",
-                argv[0], PCONFIGURE_VERSION, libflo::version());
-        exit(0);
-    }
-
-    auto ukw = libflo::parse(argv[1]);
-    auto kw = libflo::infer_widths(ukw);
-
-    for (auto it = kw.nodes(); !it.done(); ++it)
-        (*it)->writeln(stdout);
+namespace libflo {
+    const char *version(void);
 }
+
+#endif
