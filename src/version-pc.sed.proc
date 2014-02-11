@@ -1,0 +1,20 @@
+#!/bin/bash
+
+in="obj/proc/version.h"
+
+if [[ "$1" == "--deps" ]]
+then
+    echo "$in"
+    exit 0
+fi
+
+
+if [[ "$1" == "--generate" ]]
+then
+    version="$(cat "$in" | grep ^"#define PCONFIGURE_VERSION" | cut -d' ' -f3)"
+    version="$(echo "$version" | sed s/\"//g)"
+    echo "s/@@pconfigure_version@@/${version}/g"
+    exit 0
+fi
+
+exit 1

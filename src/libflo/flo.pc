@@ -1,0 +1,11 @@
+prefix=@@pconfigure_prefix@@
+exec_prefix=@@pconfigure_prefix@@
+libdir=${prefix}/@@pconfigure_libdir@@
+includedir=${prefix}/@@pconfigure_hdrdir@@
+
+Name: flo
+Description: A Flo file format parser
+Version: @@pconfigure_version@@
+Libs: -Wl,-rpath,${libdir} -L${libdir} -lflo
+Cflags: -I${includedir} 
+URL: http://github.com/palmer-dabbelt/libflo/

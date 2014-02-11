@@ -9,7 +9,11 @@ LANGUAGES   += bash
 
 LANGUAGES   += h
 
+LANGUAGES   += pkgconfig
+COMPILEOPTS += -Sobj/proc/version-pc.sed
+
 GENERATE    += version.h
+GENERATE    += version-pc.sed
 
 LIBRARIES   += libflo.so
 SOURCES     += libflo/parse.c++
@@ -17,6 +21,9 @@ SOURCES     += libflo/infer_widths.c++
 SOURCES     += libflo/version.c++
 
 CONFIG      += find_library_headers
+
+LIBRARIES   += pkgconfig/flo.pc
+SOURCES     += libflo/flo.pc
 
 BINARIES    += flo-infer-widths
 DEPLIBS     += flo
