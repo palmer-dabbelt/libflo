@@ -1,13 +1,16 @@
 libflo: A C++ library for parsing Flo files
-    
+
 Chisel has a "flo" backend, which outputs "flo" files.  These are
 essentially just representations of the internal Chisel graph format,
 which probably makes it the easiest way to interface external tools
 with Chisel.
-    
+
 This code originated while trying to write a DREAMER ISA simulator but
 appears to be useful outside of just that so it's been split off into
 a library.
 
 libflo uses pconfigure as a build system
 <http://github.com/palmer-dabbelt/pconfigure>.
+
+An example of how to use libflo can be seen in src/infer_widths.c++,
+which exposes libflo's width inference code on the command-line.
