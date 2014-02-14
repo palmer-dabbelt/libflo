@@ -79,14 +79,21 @@ namespace libflo {
         const std::string s(size_t i) { return _s[i]; }
         const std::string o(size_t i) { return (i == 0) ? _d : _s[i-1]; }
 
-        enum opcode opcode(void) { return _op.opcode(); }
-        unsigned width(void) { return _op.width(); }
+        enum opcode opcode(void) const { return _op.opcode(); }
+        unsigned width(void) const { return _op.width(); }
 
         /* Writes this node to a file with a newline at the end. */
         void writeln(FILE *f);
 
         /* Returns a new node with the width parameter set. */
         node_ptr with_width(unsigned width) const;
+
+        /* Returns the width of the output of this node.  Note that
+         * this is different than the "width", which is the operation
+         * width.  For example "eq/32" has an output width of 1 but an
+         * operation width of 32, which means it compares 32 bits and
+         * returns one. */
+        unsigned outwid(void) const;
 
     public:
         /* Parses a node, given a string that represents that node. */

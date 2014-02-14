@@ -20,6 +20,7 @@
  */
 
 #include "node.h++"
+#include "opcode.h++"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
@@ -87,6 +88,45 @@ void node::writeln(FILE *f)
 node_ptr node::with_width(unsigned width) const
 {
     return node_ptr(new node(_d, opwidthp(_op.opcode(), width), _s));
+}
+
+unsigned node::outwid(void) const
+{
+    switch (this->opcode()) {
+    case libflo::opcode::EQ:
+    case libflo::opcode::GTE:
+    case libflo::opcode::LT:
+    case libflo::opcode::NEQ:
+        return 1;
+
+    case libflo::opcode::ADD:
+    case libflo::opcode::AND:
+    case libflo::opcode::ARSH:
+    case libflo::opcode::CAT:
+    case libflo::opcode::EAT:
+    case libflo::opcode::IN:
+    case libflo::opcode::LD:
+    case libflo::opcode::LIT:
+    case libflo::opcode::LSH:
+    case libflo::opcode::MEM:
+    case libflo::opcode::MOV:
+    case libflo::opcode::MUX:
+    case libflo::opcode::MSK:
+    case libflo::opcode::NOT:
+    case libflo::opcode::OR:
+    case libflo::opcode::OUT:
+    case libflo::opcode::REG:
+    case libflo::opcode::RND:
+    case libflo::opcode::RSH:
+    case libflo::opcode::RST:
+    case libflo::opcode::ST:
+    case libflo::opcode::SUB:
+    case libflo::opcode::XOR:
+        return width();
+    }
+
+    fprintf(stderr, "Made it past an opcode switch\n");
+    abort();
 }
 
 node_ptr node::parse(const std::string &line)
