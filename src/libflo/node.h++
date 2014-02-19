@@ -59,6 +59,7 @@ namespace libflo {
              const std::string s1,
              const std::string s2);
 
+    protected:
         /* Effectively a copy constructor, but you can replace some
          * parts. */
         node(const std::string d,
