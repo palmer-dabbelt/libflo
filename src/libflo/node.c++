@@ -85,6 +85,52 @@ void node::writeln(FILE *f)
     fprintf(f, "\n");
 }
 
+const std::string node::to_string(void) const
+{
+    char buffer[LINE_MAX];
+    switch (_s.size()) {
+    case 0:
+        snprintf(buffer, LINE_MAX, "%s = %s",
+                 _d.c_str(),
+                 _op.to_string().c_str()
+            );
+        break;
+
+    case 1:
+        snprintf(buffer, LINE_MAX, "%s = %s %s",
+                 _d.c_str(),
+                 _op.to_string().c_str(),
+                 _s[0].c_str()
+            );
+        break;
+
+    case 2:
+        snprintf(buffer, LINE_MAX, "%s = %s %s %s",
+                 _d.c_str(),
+                 _op.to_string().c_str(),
+                 _s[0].c_str(),
+                 _s[1].c_str()
+            );
+        break;
+
+    case 3:
+        snprintf(buffer, LINE_MAX, "%s = %s %s %s %s",
+                 _d.c_str(),
+                 _op.to_string().c_str(),
+                 _s[0].c_str(),
+                 _s[1].c_str(),
+                 _s[2].c_str()
+            );
+        break;
+
+    default:
+        fprintf(stderr, "Too many arguments to node\n");
+        abort();
+    }
+
+    return buffer;
+}
+
 node_ptr node::with_width(unsigned width) const
 {
     return node_ptr(new node(_d, opwidthp(_op.opcode(), width), _s));

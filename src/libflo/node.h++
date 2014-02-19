@@ -86,6 +86,9 @@ namespace libflo {
         /* Writes this node to a file with a newline at the end. */
         void writeln(FILE *f);
 
+        /* Returns this node as a string. */
+        const std::string to_string(void) const;
+
         /* Returns a new node with the width parameter set. */
         node_ptr with_width(unsigned width) const;
 
