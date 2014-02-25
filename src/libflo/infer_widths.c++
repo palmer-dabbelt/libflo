@@ -314,6 +314,7 @@ bool know_d_width(const node_ptr o)
          * exactly specified anywhere. */
     case opcode::ADD:
     case opcode::AND:
+    case opcode::IN:
     case opcode::MOV:
     case opcode::MUX:
     case opcode::NOT:
@@ -326,7 +327,6 @@ bool know_d_width(const node_ptr o)
         /* I haven't figured out what these ones do yet... */
     case opcode::EAT:
     case opcode::RND:
-    case opcode::IN:
     case opcode::LIT:
     case opcode::CAT:
     case opcode::RSH:
@@ -367,6 +367,7 @@ unsigned get_d_width(const node_ptr o)
 
     case opcode::ADD:
     case opcode::AND:
+    case opcode::IN:
     case opcode::MOV:
     case opcode::MUX:
     case opcode::NOT:
@@ -378,7 +379,6 @@ unsigned get_d_width(const node_ptr o)
 
     case opcode::EAT:
     case opcode::RND:
-    case opcode::IN:
     case opcode::LIT:
     case opcode::CAT:
     case opcode::RSH:
@@ -421,6 +421,7 @@ bool know_s_width(const node_ptr o, int i)
          * then we implicitly know the input widths. */
     case opcode::ADD:
     case opcode::AND:
+    case opcode::IN:
     case opcode::MOV:
     case opcode::NOT:
     case opcode::OR:
@@ -439,7 +440,6 @@ bool know_s_width(const node_ptr o, int i)
 
     case opcode::EAT:
     case opcode::RND:
-    case opcode::IN:
     case opcode::LIT:
     case opcode::CAT:
     case opcode::RSH:
@@ -477,6 +477,7 @@ unsigned get_s_width(const node_ptr o, int i)
 
     case opcode::ADD:
     case opcode::AND:
+    case opcode::IN:
     case opcode::MOV:
     case opcode::NOT:
     case opcode::OR:
@@ -493,7 +494,6 @@ unsigned get_s_width(const node_ptr o, int i)
 
     case opcode::EAT:
     case opcode::RND:
-    case opcode::IN:
     case opcode::LIT:
     case opcode::CAT:
     case opcode::RSH:
@@ -534,6 +534,7 @@ bool need_o_match(const node_ptr o, int i, int j)
         /* All indicies must match. */
     case opcode::ADD:
     case opcode::AND:
+    case opcode::IN:
     case opcode::MOV:
     case opcode::NOT:
     case opcode::OR:
@@ -553,7 +554,6 @@ bool need_o_match(const node_ptr o, int i, int j)
 
     case opcode::EAT:
     case opcode::RND:
-    case opcode::IN:
     case opcode::LIT:
     case opcode::CAT:
     case opcode::RSH:
@@ -592,10 +592,11 @@ node_ptr remap(node_ptr o, const known_map &map)
     switch (o->opcode()) {
         /* These operations match the input width fine and don't need
          * modification. */
-    case opcode::MUX:
     case opcode::ADD:
     case opcode::AND:
+    case opcode::IN:
     case opcode::MOV:
+    case opcode::MUX:
     case opcode::NOT:
     case opcode::OR:
     case opcode::OUT:
@@ -622,7 +623,6 @@ node_ptr remap(node_ptr o, const known_map &map)
 
     case opcode::EAT:
     case opcode::RND:
-    case opcode::IN:
     case opcode::LIT:
     case opcode::CAT:
     case opcode::RSH:
