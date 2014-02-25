@@ -289,7 +289,7 @@ const node_list libflo::infer_widths(const node_list &ops_in)
             if (s0l != known.end() && s1l != known.end()) {
                 auto s0 = s0l->second;
                 auto s1 = s1l->second;
-                auto wid = o->with_cat_width(s0->width() + s1->width());
+                auto wid = o->with_width(s0->width() + s1->width());
                 auto kw = upgrade(wid);
 
 #ifdef DEBUG_WIDTH_INFERENCE
@@ -691,7 +691,7 @@ node_ptr remap(node_ptr o, const known_map &map)
                     o->s(0).c_str());
             abort();
         }
-        return o->with_width(l->second->width());
+        return o->with_width(l->second->width())->with_cat_width(o->width());
     }
 
     case opcode::EAT:
