@@ -659,7 +659,6 @@ node_ptr remap(node_ptr o, const known_map &map)
     case opcode::OR:
     case opcode::OUT:
     case opcode::REG:
-    case opcode::RSH:
     case opcode::RST:
     case opcode::SUB:
     case opcode::XOR:
@@ -681,6 +680,19 @@ node_ptr remap(node_ptr o, const known_map &map)
         return o->with_width(l->second->width());
     }
 
+        /* Right shift requires a bit of magic: the "width" is
+         * actually a mask! */
+    case opcode::RSH:
+    {
+        auto l = map.find(o->s(0));
+        if (l == map.end()) {
+            fprintf(stderr, "Attempted to remap unmapped node '%s'\n",
+                    o->s(0).c_str());
+            abort();
+        }
+        return o->with_alt_width(l->second->width());
+    }
+
         /* Yet another special case: cat actually gets provided the
          * width of its last operand. */
     case opcode::CAT:
@@ -688,10 +700,10 @@ node_ptr remap(node_ptr o, const known_map &map)
         auto l = map.find(o->s(1));
         if (l == map.end()) {
             fprintf(stderr, "Attempted to remap unmapped node '%s'\n",
-                    o->s(0).c_str());
+                    o->s(1).c_str());
             abort();
         }
-        return o->with_width(l->second->width())->with_cat_width(o->width());
+        return o->with_width(l->second->width())->with_alt_width(o->width());
     }
 
     case opcode::EAT:

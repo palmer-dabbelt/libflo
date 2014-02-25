@@ -36,7 +36,7 @@ namespace libflo {
     class node {
     private:
         const std::string _d;
-        const unsigned _catwidth;
+        const unsigned _altwidth;
         const opwidthp _op;
         const std::vector<std::string> _s;
 
@@ -84,7 +84,7 @@ namespace libflo {
         const std::string o(size_t i) { return (i == 0) ? _d : _s[i-1]; }
 
         enum opcode opcode(void) const { return _op.opcode(); }
-        unsigned width(void) const { return _op.width(); }
+        unsigned width(void) const;
 
         /* Writes this node to a file with a newline at the end. */
         void writeln(FILE *f);
@@ -95,12 +95,10 @@ namespace libflo {
         /* Returns a new node with the width parameter set. */
         node_ptr with_width(unsigned width) const;
 
-        /* A special call that sets the cat width, which is some magic
-         * only used for the CAT node.  You really shouldn't be using
-         * this unless you _know_ that you've got a CAT node that
-         * you're creating.  Essentially it's only useful during width
-         * inference. */
-        node_ptr with_cat_width(unsigned width) const;
+        /* Some nodes have an alternate width parameter.  You really
+         * shouldn't be specifying this at all unless you're inside
+         * some width inference code. */
+        node_ptr with_alt_width(unsigned width) const;
 
         /* Returns the width of the output of this node.  Note that
          * this is different than the "width", which is the operation
@@ -109,9 +107,13 @@ namespace libflo {
          * returns one. */
         unsigned outwid(void) const;
 
+        /* Just use this in the "copy" constructor! */
+        unsigned alt_width(void) const { return _altwidth; }
+
     public:
         /* Parses a node, given a string that represents that node. */
         static node_ptr parse(const std::string &line);
+
     };
 }
 

@@ -33,7 +33,7 @@ using namespace libflo;
 node::node(const std::string d,
            const std::string op)
     : _d(d),
-      _catwidth(-1),
+      _altwidth(-1),
       _op(op),
       _s()
 {
@@ -43,7 +43,7 @@ node::node(const std::string d,
            const std::string op,
            const std::string s0)
     : _d(d),
-      _catwidth(-1),
+      _altwidth(-1),
       _op(op),
       _s({s0})
 {
@@ -54,7 +54,7 @@ node::node(const std::string d,
            const std::string s0,
            const std::string s1)
     : _d(d),
-      _catwidth(-1),
+      _altwidth(-1),
       _op(op),
       _s({s0, s1})
 {
@@ -66,7 +66,7 @@ node::node(const std::string d,
            const std::string s1,
            const std::string s2)
     : _d(d),
-      _catwidth(-1),
+      _altwidth(-1),
       _op(op),
       _s({s0, s1, s2})
 {
@@ -74,10 +74,10 @@ node::node(const std::string d,
 
 node::node(const std::string d,
            opwidthp op,
-           const unsigned catwidth,
+           const unsigned altwidth,
            const std::vector<std::string> s)
     : _d(d),
-      _catwidth(catwidth),
+      _altwidth(altwidth),
       _op(op),
       _s(s)
 {
@@ -141,18 +141,65 @@ node_ptr node::with_width(unsigned width) const
 {
     return node_ptr(new node(_d,
                              opwidthp(_op.opcode(), width),
-                             _catwidth,
+                             _altwidth,
                              _s)
         );
 }
 
-node_ptr node::with_cat_width(unsigned width) const
+node_ptr node::with_alt_width(unsigned width) const
 {
     return node_ptr(new node(_d,
                              _op,
                              width,
                              _s)
         );
+}
+
+unsigned node::width(void) const
+{
+    switch (this->opcode()) {
+    case libflo::opcode::EQ:
+    case libflo::opcode::GTE:
+    case libflo::opcode::LT:
+    case libflo::opcode::NEQ:
+    case libflo::opcode::ADD:
+    case libflo::opcode::AND:
+    case libflo::opcode::ARSH:
+    case libflo::opcode::EAT:
+    case libflo::opcode::IN:
+    case libflo::opcode::LD:
+    case libflo::opcode::LIT:
+    case libflo::opcode::LOG2:
+    case libflo::opcode::LSH:
+    case libflo::opcode::MEM:
+    case libflo::opcode::MOV:
+    case libflo::opcode::MUL:
+    case libflo::opcode::MUX:
+    case libflo::opcode::MSK:
+    case libflo::opcode::NEG:
+    case libflo::opcode::NOP:
+    case libflo::opcode::NOT:
+    case libflo::opcode::OR:
+    case libflo::opcode::OUT:
+    case libflo::opcode::RD:
+    case libflo::opcode::REG:
+    case libflo::opcode::RND:
+    case libflo::opcode::RST:
+    case libflo::opcode::ST:
+    case libflo::opcode::SUB:
+    case libflo::opcode::WR:
+    case libflo::opcode::XOR:
+    case libflo::opcode::CAT:
+        return _op.width();
+
+    case libflo::opcode::RSH:
+        if (_altwidth == (unsigned)-1)
+            return _op.width();
+        return _altwidth;
+    }
+
+    fprintf(stderr, "Made it past an opcode switch\n");
+    abort();
 }
 
 unsigned node::outwid(void) const
@@ -186,16 +233,16 @@ unsigned node::outwid(void) const
     case libflo::opcode::RD:
     case libflo::opcode::REG:
     case libflo::opcode::RND:
-    case libflo::opcode::RSH:
     case libflo::opcode::RST:
+    case libflo::opcode::RSH:
     case libflo::opcode::ST:
     case libflo::opcode::SUB:
     case libflo::opcode::WR:
     case libflo::opcode::XOR:
-        return width();
+        return _op.width();
 
     case libflo::opcode::CAT:
-        return _catwidth;
+        return _altwidth;
     }
 
     fprintf(stderr, "Made it past an opcode switch\n");
