@@ -326,11 +326,15 @@ bool know_d_width(const node_ptr o)
     case opcode::XOR:
         return o->op().has_width();
 
+        /* The width attached to the cat operation is actually the
+         * width of one of the inputs, not the width of the output. */
+    case opcode::CAT:
+        return false;
+
         /* I haven't figured out what these ones do yet... */
     case opcode::EAT:
     case opcode::RND:
     case opcode::LIT:
-    case opcode::CAT:
     case opcode::MSK:
     case opcode::LD:
     case opcode::NEQ:
@@ -379,10 +383,14 @@ unsigned get_d_width(const node_ptr o)
     case opcode::XOR:
         return o->op().width();
 
+    case opcode::CAT:
+        fprintf(stderr, "D width is unknowable\n");
+        abort();
+        return -1;
+
     case opcode::EAT:
     case opcode::RND:
     case opcode::LIT:
-    case opcode::CAT:
     case opcode::MSK:
     case opcode::LD:
     case opcode::NEQ:
@@ -444,10 +452,16 @@ bool know_s_width(const node_ptr o, int i)
     case opcode::RSH:
         return false;
 
+        /* The width of the second source operation is what's actually
+         * included in the cat operation. */
+    case opcode::CAT:
+        if (i == 1)
+            return o->op().has_width();
+        return false;
+
     case opcode::EAT:
     case opcode::RND:
     case opcode::LIT:
-    case opcode::CAT:
     case opcode::MSK:
     case opcode::LD:
     case opcode::NEQ:
@@ -502,10 +516,14 @@ unsigned get_s_width(const node_ptr o, int i)
         abort();
         return -1;
 
+    case opcode::CAT:
+        if (i == 1)
+            return o->op().has_width();
+        return -1;
+
     case opcode::EAT:
     case opcode::RND:
     case opcode::LIT:
-    case opcode::CAT:
     case opcode::MSK:
     case opcode::LD:
     case opcode::NEQ:
@@ -561,15 +579,17 @@ bool need_o_match(const node_ptr o, int i, int j)
     case opcode::RST:
         return (i >= 1) && (j >= 1);
 
-        /* FIXME: Is it true that the widths don't have to match for
-         * shifts?  It certainly feels that way... */
+        /* FIXME: These operations have a more complicated
+         * relationship than I previously expected.  Here I just cross
+         * my fingers and hope that there's enough reduntant
+         * information to still infer everything that's necessary. */
     case opcode::RSH:
+    case opcode::CAT:
         return false;
 
     case opcode::EAT:
     case opcode::RND:
     case opcode::LIT:
-    case opcode::CAT:
     case opcode::MSK:
     case opcode::LD:
     case opcode::NEQ:
@@ -635,10 +655,22 @@ node_ptr remap(node_ptr o, const known_map &map)
         return o->with_width(l->second->width());
     }
 
+        /* Yet another special case: cat actually gets provided the
+         * width of its last operand. */
+    case opcode::CAT:
+    {
+        auto l = map.find(o->s(1));
+        if (l == map.end()) {
+            fprintf(stderr, "Attempted to remap unmapped node '%s'\n",
+                    o->s(0).c_str());
+            abort();
+        }
+        return o->with_width(l->second->width());
+    }
+
     case opcode::EAT:
     case opcode::RND:
     case opcode::LIT:
-    case opcode::CAT:
     case opcode::MSK:
     case opcode::LD:
     case opcode::NEQ:
