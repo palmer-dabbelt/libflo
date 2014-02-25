@@ -276,6 +276,38 @@ const node_list libflo::infer_widths(const node_list &ops_in)
             }
         }
 
+        /* Here's a special case for the CAT operation: we can
+         * determine its width IFF we know the widths of its
+         * inputs. */
+        /* FIXME: This should really be generalized, but I think it'd
+         * require messing with the coorelation code above and I don't
+         * want to do that right now... */
+        if (o->opcode() == libflo::opcode::CAT) {
+            auto s0l = known.find(o->s(0));
+            auto s1l = known.find(o->s(1));
+
+            if (s0l != known.end() && s1l != known.end()) {
+                auto s0 = s0l->second;
+                auto s1 = s1l->second;
+                auto wid = o->with_width(s0->width() + s1->width());
+                auto kw = upgrade(wid);
+
+#ifdef DEBUG_WIDTH_INFERENCE
+                fprintf(stderr,
+                        "inferred CAT width: '%s' of %u ('%s' + '%s' in ",
+                        o->d().c_str(), kw->width(),
+                        o->s(0).c_str(),
+                        o->s(1).c_str()
+                    );
+                o->writeln(stderr);
+#endif
+
+                out.add(kw);
+                known.insert(known_pair(kw->d(), kw));
+                did_work = true;
+            }
+        }
+
         if (did_work == false) {
             /* If we've managed to make it to here then that means
              * that we couldn't do any work at this step.  Add it back
@@ -455,8 +487,6 @@ bool know_s_width(const node_ptr o, int i)
         /* The width of the second source operation is what's actually
          * included in the cat operation. */
     case opcode::CAT:
-        if (i == 1)
-            return o->op().has_width();
         return false;
 
     case opcode::EAT:
@@ -512,13 +542,9 @@ unsigned get_s_width(const node_ptr o, int i)
         return o->op().width();
 
     case opcode::RSH:
+    case opcode::CAT:
         fprintf(stderr, "The bit-width of a source of this type unknowable\n");
         abort();
-        return -1;
-
-    case opcode::CAT:
-        if (i == 1)
-            return o->op().has_width();
         return -1;
 
     case opcode::EAT:
