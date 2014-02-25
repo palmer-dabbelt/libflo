@@ -323,6 +323,7 @@ bool know_d_width(const node_ptr o)
     case opcode::REG:
     case opcode::RSH:
     case opcode::SUB:
+    case opcode::XOR:
         return o->op().has_width();
 
         /* I haven't figured out what these ones do yet... */
@@ -335,7 +336,6 @@ bool know_d_width(const node_ptr o)
     case opcode::NEQ:
     case opcode::ARSH:
     case opcode::LSH:
-    case opcode::XOR:
     case opcode::ST:
     case opcode::MEM:
     case opcode::NOP:
@@ -376,6 +376,7 @@ unsigned get_d_width(const node_ptr o)
     case opcode::REG:
     case opcode::RSH:
     case opcode::SUB:
+    case opcode::XOR:
         return o->op().width();
 
     case opcode::EAT:
@@ -387,7 +388,6 @@ unsigned get_d_width(const node_ptr o)
     case opcode::NEQ:
     case opcode::ARSH:
     case opcode::LSH:
-    case opcode::XOR:
     case opcode::ST:
     case opcode::MEM:
     case opcode::NOP:
@@ -428,6 +428,7 @@ bool know_s_width(const node_ptr o, int i)
     case opcode::OUT:
     case opcode::REG:
     case opcode::SUB:
+    case opcode::XOR:
         return o->op().has_width();
 
         /* These operations have a single bit width through all their
@@ -452,7 +453,6 @@ bool know_s_width(const node_ptr o, int i)
     case opcode::NEQ:
     case opcode::ARSH:
     case opcode::LSH:
-    case opcode::XOR:
     case opcode::ST:
     case opcode::MEM:
     case opcode::NOP:
@@ -488,6 +488,7 @@ unsigned get_s_width(const node_ptr o, int i)
     case opcode::OUT:
     case opcode::REG:
     case opcode::SUB:
+    case opcode::XOR:
         return o->op().width();
 
     case opcode::EQ:
@@ -510,7 +511,6 @@ unsigned get_s_width(const node_ptr o, int i)
     case opcode::NEQ:
     case opcode::ARSH:
     case opcode::LSH:
-    case opcode::XOR:
     case opcode::ST:
     case opcode::MEM:
     case opcode::NOP:
@@ -549,6 +549,7 @@ bool need_o_match(const node_ptr o, int i, int j)
     case opcode::OUT:
     case opcode::REG:
     case opcode::SUB:
+    case opcode::XOR:
         return true;
 
         /* The destination is boolean, but all other operations must
@@ -574,7 +575,6 @@ bool need_o_match(const node_ptr o, int i, int j)
     case opcode::NEQ:
     case opcode::ARSH:
     case opcode::LSH:
-    case opcode::XOR:
     case opcode::ST:
     case opcode::MEM:
     case opcode::NOP:
@@ -616,6 +616,7 @@ node_ptr remap(node_ptr o, const known_map &map)
     case opcode::RSH:
     case opcode::RST:
     case opcode::SUB:
+    case opcode::XOR:
         return o;
 
         /* The destination is boolean, but the operation still has a
@@ -643,7 +644,6 @@ node_ptr remap(node_ptr o, const known_map &map)
     case opcode::NEQ:
     case opcode::ARSH:
     case opcode::LSH:
-    case opcode::XOR:
     case opcode::ST:
     case opcode::MEM:
     case opcode::NOP:
