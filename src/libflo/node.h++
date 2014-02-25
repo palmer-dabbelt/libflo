@@ -36,6 +36,7 @@ namespace libflo {
     class node {
     private:
         const std::string _d;
+        const unsigned _catwidth;
         const opwidthp _op;
         const std::vector<std::string> _s;
 
@@ -64,7 +65,9 @@ namespace libflo {
          * parts. */
         node(const std::string d,
              opwidthp op,
-             const std::vector<std::string> s);
+             const unsigned catwidth,
+             const std::vector<std::string> s
+            );
         
     public:
         /* Accessor functions. */
@@ -91,6 +94,13 @@ namespace libflo {
 
         /* Returns a new node with the width parameter set. */
         node_ptr with_width(unsigned width) const;
+
+        /* A special call that sets the cat width, which is some magic
+         * only used for the CAT node.  You really shouldn't be using
+         * this unless you _know_ that you've got a CAT node that
+         * you're creating.  Essentially it's only useful during width
+         * inference. */
+        node_ptr with_cat_width(unsigned width) const;
 
         /* Returns the width of the output of this node.  Note that
          * this is different than the "width", which is the operation

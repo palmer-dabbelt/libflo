@@ -33,6 +33,7 @@ using namespace libflo;
 node::node(const std::string d,
            const std::string op)
     : _d(d),
+      _catwidth(-1),
       _op(op),
       _s()
 {
@@ -42,6 +43,7 @@ node::node(const std::string d,
            const std::string op,
            const std::string s0)
     : _d(d),
+      _catwidth(-1),
       _op(op),
       _s({s0})
 {
@@ -52,6 +54,7 @@ node::node(const std::string d,
            const std::string s0,
            const std::string s1)
     : _d(d),
+      _catwidth(-1),
       _op(op),
       _s({s0, s1})
 {
@@ -63,6 +66,7 @@ node::node(const std::string d,
            const std::string s1,
            const std::string s2)
     : _d(d),
+      _catwidth(-1),
       _op(op),
       _s({s0, s1, s2})
 {
@@ -70,8 +74,10 @@ node::node(const std::string d,
 
 node::node(const std::string d,
            opwidthp op,
+           const unsigned catwidth,
            const std::vector<std::string> s)
     : _d(d),
+      _catwidth(catwidth),
       _op(op),
       _s(s)
 {
@@ -133,7 +139,20 @@ const std::string node::to_string(void) const
 
 node_ptr node::with_width(unsigned width) const
 {
-    return node_ptr(new node(_d, opwidthp(_op.opcode(), width), _s));
+    return node_ptr(new node(_d,
+                             opwidthp(_op.opcode(), width),
+                             _catwidth,
+                             _s)
+        );
+}
+
+node_ptr node::with_cat_width(unsigned width) const
+{
+    return node_ptr(new node(_d,
+                             _op,
+                             width,
+                             _s)
+        );
 }
 
 unsigned node::outwid(void) const
@@ -148,7 +167,6 @@ unsigned node::outwid(void) const
     case libflo::opcode::ADD:
     case libflo::opcode::AND:
     case libflo::opcode::ARSH:
-    case libflo::opcode::CAT:
     case libflo::opcode::EAT:
     case libflo::opcode::IN:
     case libflo::opcode::LD:
@@ -175,6 +193,9 @@ unsigned node::outwid(void) const
     case libflo::opcode::WR:
     case libflo::opcode::XOR:
         return width();
+
+    case libflo::opcode::CAT:
+        return _catwidth;
     }
 
     fprintf(stderr, "Made it past an opcode switch\n");

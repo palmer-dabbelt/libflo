@@ -289,7 +289,7 @@ const node_list libflo::infer_widths(const node_list &ops_in)
             if (s0l != known.end() && s1l != known.end()) {
                 auto s0 = s0l->second;
                 auto s1 = s1l->second;
-                auto wid = o->with_width(s0->width() + s1->width());
+                auto wid = o->with_cat_width(s0->width() + s1->width());
                 auto kw = upgrade(wid);
 
 #ifdef DEBUG_WIDTH_INFERENCE
