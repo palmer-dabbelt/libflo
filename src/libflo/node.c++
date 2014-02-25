@@ -153,20 +153,26 @@ unsigned node::outwid(void) const
     case libflo::opcode::IN:
     case libflo::opcode::LD:
     case libflo::opcode::LIT:
+    case libflo::opcode::LOG2:
     case libflo::opcode::LSH:
     case libflo::opcode::MEM:
     case libflo::opcode::MOV:
+    case libflo::opcode::MUL:
     case libflo::opcode::MUX:
     case libflo::opcode::MSK:
+    case libflo::opcode::NEG:
+    case libflo::opcode::NOP:
     case libflo::opcode::NOT:
     case libflo::opcode::OR:
     case libflo::opcode::OUT:
+    case libflo::opcode::RD:
     case libflo::opcode::REG:
     case libflo::opcode::RND:
     case libflo::opcode::RSH:
     case libflo::opcode::RST:
     case libflo::opcode::ST:
     case libflo::opcode::SUB:
+    case libflo::opcode::WR:
     case libflo::opcode::XOR:
         return width();
     }

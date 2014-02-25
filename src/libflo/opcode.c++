@@ -84,6 +84,18 @@ enum opcode libflo::string_to_opcode(const std::string op)
         return opcode::GTE;
     } else if (str_starts(op, "mov")) {
         return opcode::MOV;
+    } else if (str_starts(op, "nop")) {
+        return opcode::NOP;
+    } else if (str_starts(op, "mul")) {
+        return opcode::MUL;
+    } else if (str_starts(op, "log2")) {
+        return opcode::LOG2;
+    } else if (str_starts(op, "neg")) {
+        return opcode::NEG;
+    } else if (str_starts(op, "rd")) {
+        return opcode::RD;
+    } else if (str_starts(op, "wr")) {
+        return opcode::WR;
     } else {
         fprintf(stderr, "Unable to parse operation '%s'\n", op.c_str());
         abort();
@@ -120,6 +132,12 @@ const std::string&& libflo::opcode_to_string(enum opcode op)
     case opcode::OUT:  return std::move(std::string("out"));
     case opcode::GTE:  return std::move(std::string("gte"));
     case opcode::MOV:  return std::move(std::string("mov"));
+    case opcode::NOP:  return std::move(std::string("nop"));
+    case opcode::MUL:  return std::move(std::string("mul"));
+    case opcode::LOG2: return std::move(std::string("log2"));
+    case opcode::NEG:  return std::move(std::string("neg"));
+    case opcode::RD:   return std::move(std::string("rd"));
+    case opcode::WR:   return std::move(std::string("wr"));
     }
 
     fprintf(stderr, "Reached the end of a switch...\n");

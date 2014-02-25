@@ -338,6 +338,12 @@ bool know_d_width(const node_ptr o)
     case opcode::XOR:
     case opcode::ST:
     case opcode::MEM:
+    case opcode::NOP:
+    case opcode::MUL:
+    case opcode::LOG2:
+    case opcode::NEG:
+    case opcode::RD:
+    case opcode::WR:
         fprintf(stderr, "Opcode '%s' not handled in know_d_width()\n",
                 opcode_to_string(o->opcode()).c_str());
         abort();
@@ -384,6 +390,12 @@ unsigned get_d_width(const node_ptr o)
     case opcode::XOR:
     case opcode::ST:
     case opcode::MEM:
+    case opcode::NOP:
+    case opcode::MUL:
+    case opcode::LOG2:
+    case opcode::NEG:
+    case opcode::RD:
+    case opcode::WR:
         fprintf(stderr, "Opcode '%s' not handled in get_d_width()\n",
                 opcode_to_string(o->opcode()).c_str());
         abort();
@@ -439,6 +451,12 @@ bool know_s_width(const node_ptr o, int i)
     case opcode::XOR:
     case opcode::ST:
     case opcode::MEM:
+    case opcode::NOP:
+    case opcode::MUL:
+    case opcode::LOG2:
+    case opcode::NEG:
+    case opcode::RD:
+    case opcode::WR:
         fprintf(stderr, "Opcode '%s' not handled in know_s_width()\n",
                 opcode_to_string(o->opcode()).c_str());
         abort();
@@ -487,6 +505,12 @@ unsigned get_s_width(const node_ptr o, int i)
     case opcode::XOR:
     case opcode::ST:
     case opcode::MEM:
+    case opcode::NOP:
+    case opcode::MUL:
+    case opcode::LOG2:
+    case opcode::NEG:
+    case opcode::RD:
+    case opcode::WR:
         fprintf(stderr, "Opcode '%s' not handled in get_s_width()\n",
                 opcode_to_string(o->opcode()).c_str());
         abort();
@@ -541,6 +565,12 @@ bool need_o_match(const node_ptr o, int i, int j)
     case opcode::XOR:
     case opcode::ST:
     case opcode::MEM:
+    case opcode::NOP:
+    case opcode::MUL:
+    case opcode::LOG2:
+    case opcode::NEG:
+    case opcode::RD:
+    case opcode::WR:
         fprintf(stderr, "Opcode '%s' not handled in need_o_match()\n",
                 opcode_to_string(o->opcode()).c_str());
         abort();
@@ -604,6 +634,12 @@ node_ptr remap(node_ptr o, const known_map &map)
     case opcode::XOR:
     case opcode::ST:
     case opcode::MEM:
+    case opcode::NOP:
+    case opcode::MUL:
+    case opcode::LOG2:
+    case opcode::NEG:
+    case opcode::RD:
+    case opcode::WR:
         fprintf(stderr, "Unknown opcode '%s' in remap()\n",
                 opcode_to_string(o->opcode()).c_str());
         abort();
