@@ -321,6 +321,7 @@ bool know_d_width(const node_ptr o)
     case opcode::OR:
     case opcode::OUT:
     case opcode::REG:
+    case opcode::RSH:
     case opcode::SUB:
         return o->op().has_width();
 
@@ -329,7 +330,6 @@ bool know_d_width(const node_ptr o)
     case opcode::RND:
     case opcode::LIT:
     case opcode::CAT:
-    case opcode::RSH:
     case opcode::MSK:
     case opcode::LD:
     case opcode::NEQ:
@@ -374,6 +374,7 @@ unsigned get_d_width(const node_ptr o)
     case opcode::OR:
     case opcode::OUT:
     case opcode::REG:
+    case opcode::RSH:
     case opcode::SUB:
         return o->op().width();
 
@@ -381,7 +382,6 @@ unsigned get_d_width(const node_ptr o)
     case opcode::RND:
     case opcode::LIT:
     case opcode::CAT:
-    case opcode::RSH:
     case opcode::MSK:
     case opcode::LD:
     case opcode::NEQ:
@@ -438,11 +438,15 @@ bool know_s_width(const node_ptr o, int i)
     case opcode::RST:
         return o->op().has_width();
 
+        /* For this operation, nothing at all is known about the width
+         * of the sources! */
+    case opcode::RSH:
+        return false;
+
     case opcode::EAT:
     case opcode::RND:
     case opcode::LIT:
     case opcode::CAT:
-    case opcode::RSH:
     case opcode::MSK:
     case opcode::LD:
     case opcode::NEQ:
@@ -492,11 +496,15 @@ unsigned get_s_width(const node_ptr o, int i)
     case opcode::RST:
         return o->op().width();
 
+    case opcode::RSH:
+        fprintf(stderr, "The bit-width of a source of this type unknowable\n");
+        abort();
+        return -1;
+
     case opcode::EAT:
     case opcode::RND:
     case opcode::LIT:
     case opcode::CAT:
-    case opcode::RSH:
     case opcode::MSK:
     case opcode::LD:
     case opcode::NEQ:
@@ -552,11 +560,15 @@ bool need_o_match(const node_ptr o, int i, int j)
     case opcode::RST:
         return (i >= 1) && (j >= 1);
 
+        /* FIXME: Is it true that the widths don't have to match for
+         * shifts?  It certainly feels that way... */
+    case opcode::RSH:
+        return false;
+
     case opcode::EAT:
     case opcode::RND:
     case opcode::LIT:
     case opcode::CAT:
-    case opcode::RSH:
     case opcode::MSK:
     case opcode::LD:
     case opcode::NEQ:
@@ -601,6 +613,7 @@ node_ptr remap(node_ptr o, const known_map &map)
     case opcode::OR:
     case opcode::OUT:
     case opcode::REG:
+    case opcode::RSH:
     case opcode::RST:
     case opcode::SUB:
         return o;
@@ -625,7 +638,6 @@ node_ptr remap(node_ptr o, const known_map &map)
     case opcode::RND:
     case opcode::LIT:
     case opcode::CAT:
-    case opcode::RSH:
     case opcode::MSK:
     case opcode::LD:
     case opcode::NEQ:
