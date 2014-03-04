@@ -70,6 +70,21 @@ namespace libflo {
             void operator++(void) { ++_it; }
         };
 
+        class node_viter {
+        private:
+            const typename std::vector<node_ptr> _nodes;
+            typename std::vector<node_ptr>::const_iterator _it;
+        public:
+            node_viter(const std::vector<node_ptr>& nodes)
+                : _nodes(nodes),
+                  _it(_nodes.begin())
+                {
+                }
+            node_ptr operator*(void) const { return *_it; }
+            bool done(void) const { return _it == _nodes.end(); }
+            void operator++(void) { ++_it; }
+        };
+
     private:
         const std::map<std::string, node_ptr> _nodes;
         const std::vector<operation_ptr> _ops;
