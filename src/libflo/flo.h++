@@ -42,7 +42,7 @@ namespace libflo {
     public:
         class op_iter {
         private:
-            const typename std::vector<std::shared_ptr<operation_t>> _ops;
+            const typename std::vector<operation_ptr> _ops;
             typename std::vector<operation_ptr>::const_iterator _it;
         public:
             op_iter(const std::vector<operation_ptr>& ops)
@@ -57,16 +57,16 @@ namespace libflo {
 
         class node_iter {
         private:
-            const typename std::vector<std::shared_ptr<node_t>> _nodes;
-            typename std::vector<node_ptr>::const_iterator _it;
+            const typename std::map<std::string, node_ptr> _nodes;
+            typename std::map<std::string, node_ptr>::const_iterator _it;
         public:
-            node_iter(const std::vector<node_ptr>& nodes)
+            node_iter(const std::map<std::string, node_ptr>& nodes)
                 : _nodes(nodes),
                   _it(_nodes.begin())
                 {
                 }
-            node_ptr operator*(void) const { return *_it; }
-            bool done(void) const { return _it == _ops.end(); }
+            node_ptr operator*(void) const { return _it->second; }
+            bool done(void) const { return _it == _nodes.end(); }
             void operator++(void) { ++_it; }
         };
 
