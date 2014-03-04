@@ -12,5 +12,7 @@ a library.
 libflo uses pconfigure as a build system
 <http://github.com/palmer-dabbelt/pconfigure>.
 
-An example of how to use libflo can be seen in src/infer_widths.c++,
-which exposes libflo's width inference code on the command-line.
+An example of how to use libflo can be seen in src/canon.c++, which is
+t he source efor a command-line program that reads in a Flo file and
+then writes it back to stdout in canonical form -- this means with all
+widths inferred and in dataflow order.
