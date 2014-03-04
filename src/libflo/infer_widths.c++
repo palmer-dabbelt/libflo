@@ -348,6 +348,7 @@ bool know_d_width(const node_ptr o)
     case opcode::AND:
     case opcode::IN:
     case opcode::MOV:
+    case opcode::MUL:
     case opcode::MUX:
     case opcode::NOT:
     case opcode::OR:
@@ -375,7 +376,6 @@ bool know_d_width(const node_ptr o)
     case opcode::ST:
     case opcode::MEM:
     case opcode::NOP:
-    case opcode::MUL:
     case opcode::LOG2:
     case opcode::NEG:
     case opcode::RD:
@@ -405,6 +405,7 @@ unsigned get_d_width(const node_ptr o)
     case opcode::AND:
     case opcode::IN:
     case opcode::MOV:
+    case opcode::MUL:
     case opcode::MUX:
     case opcode::NOT:
     case opcode::OR:
@@ -431,7 +432,6 @@ unsigned get_d_width(const node_ptr o)
     case opcode::ST:
     case opcode::MEM:
     case opcode::NOP:
-    case opcode::MUL:
     case opcode::LOG2:
     case opcode::NEG:
     case opcode::RD:
@@ -489,6 +489,12 @@ bool know_s_width(const node_ptr o, int i)
     case opcode::CAT:
         return false;
 
+        /* Multiply is a bit special: the output width is twice the
+         * input widths.  The output width is listed in the
+         * operation. */
+    case opcode::MUL:
+        return o->op().has_width();
+
     case opcode::EAT:
     case opcode::RND:
     case opcode::LIT:
@@ -500,7 +506,6 @@ bool know_s_width(const node_ptr o, int i)
     case opcode::ST:
     case opcode::MEM:
     case opcode::NOP:
-    case opcode::MUL:
     case opcode::LOG2:
     case opcode::NEG:
     case opcode::RD:
@@ -547,6 +552,9 @@ unsigned get_s_width(const node_ptr o, int i)
         abort();
         return -1;
 
+    case opcode::MUL:
+        return o->op().width() / 2;
+
     case opcode::EAT:
     case opcode::RND:
     case opcode::LIT:
@@ -558,7 +566,6 @@ unsigned get_s_width(const node_ptr o, int i)
     case opcode::ST:
     case opcode::MEM:
     case opcode::NOP:
-    case opcode::MUL:
     case opcode::LOG2:
     case opcode::NEG:
     case opcode::RD:
@@ -613,6 +620,12 @@ bool need_o_match(const node_ptr o, int i, int j)
     case opcode::CAT:
         return false;
 
+        /* FIXME: We should have a way to coorelate the multiplier
+         * output and input widths, but they're not exactly the
+         * same... */
+    case opcode::MUL:
+        return (i >= 1) && (j >= 1);
+
     case opcode::EAT:
     case opcode::RND:
     case opcode::LIT:
@@ -624,7 +637,6 @@ bool need_o_match(const node_ptr o, int i, int j)
     case opcode::ST:
     case opcode::MEM:
     case opcode::NOP:
-    case opcode::MUL:
     case opcode::LOG2:
     case opcode::NEG:
     case opcode::RD:
@@ -655,6 +667,7 @@ node_ptr remap(node_ptr o, const known_map &map)
     case opcode::IN:
     case opcode::MOV:
     case opcode::MUX:
+    case opcode::MUL:
     case opcode::NOT:
     case opcode::OR:
     case opcode::OUT:
@@ -717,7 +730,6 @@ node_ptr remap(node_ptr o, const known_map &map)
     case opcode::ST:
     case opcode::MEM:
     case opcode::NOP:
-    case opcode::MUL:
     case opcode::LOG2:
     case opcode::NEG:
     case opcode::RD:
