@@ -22,7 +22,6 @@
 #ifndef LIBFLO__OPERATION_HXX
 #define LIBFLO__OPERATION_HXX
 
-#include "node.h++"
 #include "unknown.h++"
 #include <map>
 #include <memory>
@@ -37,18 +36,18 @@ namespace libflo {
     /* Operations represent the computation of a node -- this means
      * they take as their input the values of some nodes and produce
      * as an output the values of other nodes. */
-    class operation {
+    template<class node_t> class operation {
     private:
-        std::shared_ptr<node> _d;
+        std::shared_ptr<node_t> _d;
         unknown<size_t> _width;
         const opcode _op;
-        const std::vector<std::shared_ptr<node>> _s;
+        const std::vector<std::shared_ptr<node_t>> _s;
 
     private:
-        operation(std::shared_ptr<node>& dest,
+        operation(std::shared_ptr<node_t>& dest,
                   const unknown<size_t>& width,
                   const opcode& op,
-                  const std::vector<std::shared_ptr<node>>& s)
+                  const std::vector<std::shared_ptr<node_t>>& s)
             : _d(dest),
               _width(width),
               _op(op),
@@ -107,9 +106,9 @@ namespace libflo {
         /* Allows access to the destination, the source array, or the
          * operand array -- this just contains two indexing schemes
          * for the nodes this operation can see. */
-        const std::shared_ptr<node> d(void) const { return _d; }
-        const std::shared_ptr<node> s(size_t i) const { return _s[i]; }
-        const std::shared_ptr<node> o(size_t i) const
+        const std::shared_ptr<node_t> d(void) const { return _d; }
+        const std::shared_ptr<node_t> s(size_t i) const { return _s[i]; }
+        const std::shared_ptr<node_t> o(size_t i) const
             { return (i == 0) ? d() : s(i-1); }
 
         /* Attempts to perform local width inference.  In other words,
@@ -316,7 +315,7 @@ namespace libflo {
                  * can infer the widths of everything else.  Check to
                  * make sure any widths actually match while doing
                  * this. */
-                std::shared_ptr<node> known = NULL;
+                std::shared_ptr<node_t> known = NULL;
                 for (auto it = o.begin(); it != o.end(); ++it) {
                     auto node = this->o(*it);
                     if (node->known_width()) {
@@ -407,7 +406,7 @@ namespace libflo {
         /* Parses an operation, looking up the sources and
          * destinations by string in the provided map. */
         static std::shared_ptr<operation>
-        parse(const std::map<std::string, std::shared_ptr<node>>& n,
+        parse(const std::map<std::string, std::shared_ptr<node_t>>& n,
               const std::string d,
               const opcode& op,
               const unknown<size_t>& width,
@@ -422,7 +421,7 @@ namespace libflo {
                 }
                 auto dp = dl->second;
 
-                std::vector<std::shared_ptr<node>> sp;
+                std::vector<std::shared_ptr<node_t>> sp;
                 for (auto it = s.begin(); it != s.end(); ++it) {
                     /* Try and find this source in the list of nodes
                      * that we know about. */

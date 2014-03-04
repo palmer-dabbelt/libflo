@@ -30,7 +30,7 @@ using namespace libflo;
 #endif
 
 flo::flo(const std::map<std::string, std::shared_ptr<node>>& se,
-         const std::vector<std::shared_ptr<operation>>& ops)
+         const std::vector<operation_ptr>& ops)
     : _nodes(se),
       _ops(ops)
 {
@@ -69,11 +69,11 @@ const flo flo::parse(const std::string filename)
      * the actual computation.  In addition to actually producing the
      * operation structures, here we handle generating nodes for every
      * constant. */
-    std::vector<std::shared_ptr<operation>> ops;
+    std::vector<operation_ptr> ops;
     for (auto it = lines.begin(); it != lines.end(); ++it) {
         auto line = *it;
-        auto op = operation::parse(nodes, line.d, line.opcode,
-                                   line.width, line.s);
+        auto op = operation<node>::parse(nodes, line.d, line.opcode,
+                                         line.width, line.s);
         if (op != NULL)
             ops.push_back(op);
     }
