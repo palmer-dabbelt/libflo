@@ -103,6 +103,8 @@ namespace libflo {
         size_t cycle(void) const { return _d->cycle(); }
         bool known_cycle(void) const { return _d->known_cycle(); }
 
+        opcode op(void) const { return _op; }
+
         /* Allows access to the destination, the source array, or the
          * operand array -- this just contains two indexing schemes
          * for the nodes this operation can see. */
