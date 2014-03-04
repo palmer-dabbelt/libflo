@@ -32,3 +32,5 @@ TESTSRC     += counter-32.bash
 TESTSRC     += mod_counter.bash
 TESTSRC     += fib.bash
 TESTSRC     += gcd.bash
+TESTSRC     += adder4.bash
+

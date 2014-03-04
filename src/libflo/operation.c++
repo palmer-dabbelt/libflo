@@ -37,7 +37,8 @@ operation::operation(node_ptr& dest,
       _s(s)
 {
     /* FIXME: Check that an array with the correct number of sources
-     * has been provided. */
+     * has been provided.  The fact that I'm not doing this can cause
+     * SEGVs, which is yucky... */
     switch (op) {
     case opcode::ADD:
     case opcode::AND:
@@ -80,6 +81,7 @@ void operation::try_infer_width(void)
 {
     switch (_op) {
         /* 0-source operations. */
+    case opcode::IN:
     case opcode::RND:
     case opcode::RST:
         must_match(std::vector<size_t>({0}));
@@ -87,7 +89,6 @@ void operation::try_infer_width(void)
         break;
 
         /* 1-source ALU operations (sources match dest) */
-    case opcode::IN:
     case opcode::LIT:
     case opcode::NEG:
     case opcode::MOV:
@@ -102,7 +103,6 @@ void operation::try_infer_width(void)
     case opcode::AND:
     case opcode::OR:
     case opcode::REG:
-    case opcode::RSH:
     case opcode::SUB:
     case opcode::XOR:
         must_match(std::vector<size_t>({0, 1, 2}));
@@ -120,13 +120,6 @@ void operation::try_infer_width(void)
         _width = o(1)->width();
         break;
 
-    case opcode::ARSH:
-    case opcode::CAT:
-    case opcode::LOG2:
-    case opcode::LSH:
-    case opcode::MSK:
-        break;
-
         /* For MUXes, everything must match excpet for the first
          * source, which is always a boolean. */
     case opcode::MUX:
@@ -135,15 +128,37 @@ void operation::try_infer_width(void)
         _width = o(0)->width();
         break;
 
+        /* For multiplication the output width is twice the input
+         * width.  We've encoded this with a bit of a trick... */
+    case opcode::MUL:
+        must_match(std::vector<size_t>({1, 2}));
+        must_sum(0, std::vector<size_t>({1, 2}));
+        break;
+
+        /* CAT is a special case: the output widtht is the sum of the
+         * input widths. */
+    case opcode::CAT:
+        must_sum(0, std::vector<size_t>({1, 2}));
+        break;
+
+        /* FIXME: I have no idea what memory operations should do... */
     case opcode::LD:
     case opcode::RD:
     case opcode::ST:
     case opcode::WR:
+        fprintf(stderr, "FIXME: infer widths for memory ops\n");
+        abort();
         break;
 
-    case opcode::MUL:
-        must_match(std::vector<size_t>({1, 2}));
-        must_sum(0, std::vector<size_t>({1, 2}));
+        /* FIXME: I don't think there's anything we can do about shift
+         * operations because of the mask/extened that happens.  Note
+         * that we _do_ know the output width, so I think it's
+         * somewhat fair... */
+    case opcode::ARSH:
+    case opcode::LOG2:
+    case opcode::LSH:
+    case opcode::MSK:
+    case opcode::RSH:
         break;
 
         /* These operations just don't do anything, so it doesn't make
