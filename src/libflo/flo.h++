@@ -35,15 +35,15 @@ namespace libflo {
      * about a dataflow computation that's necessary to compute it.
      * This includes the node as well as every operation that's
      * required to make it work. */
-    class flo {
-        typedef std::shared_ptr<operation<node>> operation_ptr;
-        typedef std::shared_ptr<node> node_ptr;
+    template<class node_t, class operation_t> class flo {
+        typedef std::shared_ptr<operation_t> operation_ptr;
+        typedef std::shared_ptr<node_t> node_ptr;
 
     public:
         class op_iter {
         private:
-            const std::vector<operation_ptr> _ops;
-            std::vector<operation_ptr>::const_iterator _it;
+            const typename std::vector<std::shared_ptr<operation_t>> _ops;
+            typename std::vector<operation_ptr>::const_iterator _it;
 
         public:
             op_iter(const std::vector<operation_ptr> ops)

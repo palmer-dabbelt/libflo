@@ -20,9 +20,12 @@
  */
 
 #include <libflo/flo.h++>
+#include <libflo/node.h++>
+#include <libflo/operation.h++>
 #include <libflo/version.h++>
 #include <string.h>
 #include "version.h"
+using namespace libflo;
 
 int main(int argc, const char **argv)
 {
@@ -42,9 +45,9 @@ int main(int argc, const char **argv)
         exit(0);
     }
 
-    auto flo = libflo::flo::parse(argv[1]);
+    auto flof = flo<node, operation<node> >::parse(argv[1]);
 
-    for (auto it = flo.operations(); !it.done(); ++it) {
+    for (auto it = flof.operations(); !it.done(); ++it) {
         auto op = *it;
         op->writeln(stdout);
     }
