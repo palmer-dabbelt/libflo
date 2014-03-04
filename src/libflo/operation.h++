@@ -110,6 +110,9 @@ namespace libflo {
         const std::shared_ptr<node_t> s(size_t i) const { return _s[i]; }
         const std::shared_ptr<node_t> o(size_t i) const
             { return (i == 0) ? d() : s(i-1); }
+        const std::shared_ptr<node_t> s(void) const { return s(0); }
+        const std::shared_ptr<node_t> t(void) const { return s(1); }
+        const std::shared_ptr<node_t> u(void) const { return s(2); }
 
         /* Attempts to perform local width inference.  In other words,
          * infers the width of this node by only looking at the nodes
