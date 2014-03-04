@@ -44,15 +44,28 @@ namespace libflo {
         private:
             const typename std::vector<std::shared_ptr<operation_t>> _ops;
             typename std::vector<operation_ptr>::const_iterator _it;
-
         public:
-            op_iter(const std::vector<operation_ptr> ops)
+            op_iter(const std::vector<operation_ptr>& ops)
                 : _ops(ops),
                   _it(_ops.begin())
                 {
                 }
-
             operation_ptr operator*(void) const { return *_it; }
+            bool done(void) const { return _it == _ops.end(); }
+            void operator++(void) { ++_it; }
+        };
+
+        class node_iter {
+        private:
+            const typename std::vector<std::shared_ptr<node_t>> _nodes;
+            typename std::vector<node_ptr>::const_iterator _it;
+        public:
+            node_iter(const std::vector<node_ptr>& nodes)
+                : _nodes(nodes),
+                  _it(_nodes.begin())
+                {
+                }
+            node_ptr operator*(void) const { return *_it; }
             bool done(void) const { return _it == _ops.end(); }
             void operator++(void) { ++_it; }
         };
@@ -75,6 +88,7 @@ namespace libflo {
         /* Iterates through this program, either by nodes or by
          * operations. */
         op_iter operations(void) const { return op_iter(_ops); }
+        node_iter nodes(void) const { return node_iter(_nodes); }
 
         /* Parses the given file as a Flo file. */
         static const std::shared_ptr<flo> parse(const std::string filename)
