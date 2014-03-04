@@ -85,7 +85,8 @@ void operation::try_infer_width(void)
     case opcode::RND:
     case opcode::RST:
         must_match(std::vector<size_t>({0}));
-        _width = o(0)->width();
+        if (o(0)->known_width())
+            _width = o(0)->width();
         break;
 
         /* 1-source ALU operations (sources match dest) */
@@ -95,7 +96,8 @@ void operation::try_infer_width(void)
     case opcode::NOT:
     case opcode::OUT:
         must_match(std::vector<size_t>({0, 1}));
-        _width = o(0)->width();
+        if (o(0)->known_width())
+            _width = o(0)->width();
         break;
 
         /* 2-source ALU operations (sources match dest) */
@@ -106,7 +108,8 @@ void operation::try_infer_width(void)
     case opcode::SUB:
     case opcode::XOR:
         must_match(std::vector<size_t>({0, 1, 2}));
-        _width = o(0)->width();
+        if (o(0)->known_width())
+            _width = o(0)->width();
         break;
 
         /* Comparison operations -- note that here we will have
@@ -117,7 +120,8 @@ void operation::try_infer_width(void)
     case opcode::LT:
     case opcode::NEQ:
         must_match(std::vector<size_t>({1, 2}));
-        _width = o(1)->width();
+        if (o(1)->known_width())
+            _width = o(1)->width();
         break;
 
         /* For MUXes, everything must match excpet for the first
@@ -125,7 +129,8 @@ void operation::try_infer_width(void)
     case opcode::MUX:
         must_match(std::vector<size_t>({0, 2, 3}));
         must_be(1, 1);
-        _width = o(0)->width();
+        if (o(0)->known_width())
+            _width = o(0)->width();
         break;
 
         /* For multiplication the output width is twice the input
@@ -133,12 +138,16 @@ void operation::try_infer_width(void)
     case opcode::MUL:
         must_match(std::vector<size_t>({1, 2}));
         must_sum(0, std::vector<size_t>({1, 2}));
+        if (o(0)->known_width())
+            _width = o(0)->width();
         break;
 
         /* CAT is a special case: the output widtht is the sum of the
          * input widths. */
     case opcode::CAT:
         must_sum(0, std::vector<size_t>({1, 2}));
+        if (o(2)->known_width())
+            _width = o(2)->width();
         break;
 
         /* FIXME: I have no idea what memory operations should do... */
