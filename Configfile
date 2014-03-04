@@ -16,9 +16,7 @@ GENERATE    += version.h
 GENERATE    += version-pc.sed
 
 LIBRARIES   += libflo.so
-SOURCES     += libflo/parse.c++
-SOURCES     += libflo/infer_widths.c++
-SOURCES     += libflo/version.c++
+SOURCES     += libflo/flo.c++
 
 CONFIG      += find_library_headers
 

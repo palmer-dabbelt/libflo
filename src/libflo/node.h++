@@ -22,98 +22,62 @@
 #ifndef LIBFLO__NODE_HXX
 #define LIBFLO__NODE_HXX
 
-#include "opwidthp.h++"
+#include "opcode.h++"
+#include "unknown.h++"
 #include <memory>
 #include <string>
 #include <vector>
 
 namespace libflo {
-    /* Nodes are all reference-counted, all the time. */
     class node;
     typedef std::shared_ptr<node> node_ptr;
 
-    /* This simply holds a list of nodes. */
+    /* Everything in the dataflow machine that can have a value is
+     * considered a node. */
     class node {
     private:
-        const std::string _d;
-        const unsigned _altwidth;
-        const opwidthp _op;
-        const std::vector<std::string> _s;
+        const std::string _name;
+        unknown<size_t> _width;
+        unknown<size_t> _depth;
+        const bool _is_mem;
+        const bool _is_const;
 
     private:
-        /* These various constructors just fill in different parts of
-         * the node.  The idea here is to allow the parse() function
-         * to act a bit like a constructor, but one that can maintain
-         * const safety. */
-        node(const std::string d,
-             const std::string op);
-        node(const std::string d,
-             const std::string op,
-             const std::string s0);
-        node(const std::string d,
-             const std::string op,
-             const std::string s0,
-             const std::string s1);
-        node(const std::string d,
-             const std::string op,
-             const std::string s0,
-             const std::string s1,
-             const std::string s2);
+        node(const std::string name,
+             const unknown<size_t>& width);
 
-    protected:
-        /* Effectively a copy constructor, but you can replace some
-         * parts. */
-        node(const std::string d,
-             opwidthp op,
-             const unsigned catwidth,
-             const std::vector<std::string> s
-            );
-        
+        node(const std::string name,
+             const unknown<size_t>& width,
+             const unknown<size_t>& depth);
+
+        node(int64_t value);
+
     public:
         /* Accessor functions. */
-        const std::string d(void) const { return _d; }
-        const opwidthp op(void) const { return _op; }
-        const std::vector<std::string> s(void) const { return _s; }
+        const std::string& name(void) const { return _name; }
+        size_t width(void) const { return _width.value(); }
+        bool known_width(void) const { return _width.known(); }
+        size_t depth(void) const { return _depth.value(); }
+        bool known_depth(void) const { return _depth.known(); }
+        bool is_mem(void) const { return _is_mem; }
+        bool is_reg(void) const { return !_is_mem; }
+        bool is_const(void) const { return _is_const; }
 
-        const std::vector<std::string>::const_iterator s_begin(void)
-            { return _s.begin(); }
-        const std::vector<std::string>::const_iterator s_end(void)
-            { return _s.end(); }
-
-        const std::string s(size_t i) { return _s[i]; }
-        const std::string o(size_t i) { return (i == 0) ? _d : _s[i-1]; }
-
-        enum opcode opcode(void) const { return _op.opcode(); }
-        unsigned width(void) const;
-
-        /* Writes this node to a file with a newline at the end. */
-        void writeln(FILE *f);
-
-        /* Returns this node as a string. */
-        const std::string to_string(void) const;
-
-        /* Returns a new node with the width parameter set. */
-        node_ptr with_width(unsigned width) const;
-
-        /* Some nodes have an alternate width parameter.  You really
-         * shouldn't be specifying this at all unless you're inside
-         * some width inference code. */
-        node_ptr with_alt_width(unsigned width) const;
-
-        /* Returns the width of the output of this node.  Note that
-         * this is different than the "width", which is the operation
-         * width.  For example "eq/32" has an output width of 1 but an
-         * operation width of 32, which means it compares 32 bits and
-         * returns one. */
-        unsigned outwid(void) const;
-
-        /* Just use this in the "copy" constructor! */
-        unsigned alt_width(void) const { return _altwidth; }
+        /* Updates a width with a new node -- this will fail if both
+         * widths are known and they don't match. */
+        void update_width(const unknown<size_t>& width);
 
     public:
-        /* Parses a node, given a string that represents that node. */
-        static node_ptr parse(const std::string &line);
+        /* Parses a node to determine exactly what sort of node it
+         * is.  You probably don't want to bother with this unless
+         * you're inside the parser... */
+        static node_ptr parse(const std::string d,
+                              const opcode& op,
+                              const unknown<size_t>& width,
+                              const std::vector<std::string>& s);
 
+        /* Generates a new constant-valued node. */
+        static node_ptr constant(int64_t value);
     };
 }
 

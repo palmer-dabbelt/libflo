@@ -22,8 +22,11 @@
 #include "opcode.h++"
 #include <stdio.h>
 #include <string.h>
-
 using namespace libflo;
+
+#ifndef LINE_MAX
+#define LINE_MAX 1024
+#endif
 
 /* Searches for a short string at the start of a long string. */
 static bool str_starts(const std::string haystack, const std::string needle);
@@ -142,6 +145,23 @@ const std::string&& libflo::opcode_to_string(enum opcode op)
 
     fprintf(stderr, "Reached the end of a switch...\n");
     abort();
+}
+
+const unknown<size_t> libflo::opstring_to_width(const std::string string)
+{
+    char buffer[LINE_MAX];
+    snprintf(buffer, LINE_MAX, "%s", string.c_str());
+
+    char *num = strstr(buffer, "/");
+    if (num == NULL)
+        return unknown<size_t>();
+    num++;
+
+    for (size_t i = 0; i < strlen(num); ++i)
+        if (!isdigit(num[i]))
+            return unknown<size_t>();
+
+    return unknown<size_t>(atoi(num));
 }
 
 bool str_starts(const std::string haystack, const std::string needle)

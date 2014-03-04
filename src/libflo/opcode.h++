@@ -22,50 +22,55 @@
 #ifndef LIBFLO__OPCODE_HXX
 #define LIBFLO__OPCODE_HXX
 
+#include "unknown.h++"
 #include <string>
 
 namespace libflo {
     /* This represents the operations that a DREAMER can perform. */
     enum class opcode {
-        NOP,
-        RST,
-        LIT,
-        RND,
-        EAT,
-        NOT,
-        AND,
-        OR,
-        XOR,
-        EQ,
-        NEQ,
-        MUX,
-        LSH,
-        RSH,
-        ARSH,
-        MSK,
-        CAT,
         ADD,
-        SUB,
-        LT,
+        AND,
+        ARSH,
+        CAT,
+        EAT,
+        EQ,
         GTE,
-        MUL,
-        LOG2,
-        LD,
-        ST,
-        MOV,
-        NEG,
-        MEM,
-        RD,
-        WR,
         IN,
+        LD,
+        LIT,
+        LOG2,
+        LSH,
+        LT,
+        MEM,
+        MOV,
+        MSK,
+        MUL,
+        MUX,
+        NEG,
+        NEQ,
+        NOP,
+        NOT,
+        OR,
         OUT,
+        RD,
         REG,
+        RND,
+        RSH,
+        RST,
+        ST,
+        SUB,
+        WR,
+        XOR,
     };
 
     /* Converts an opcode to a string, or parses a string into an
      * opcode. */
     const std::string&& opcode_to_string(enum opcode opcode);
     enum opcode string_to_opcode(const std::string string);
+
+    /* Obtains the width that may or may not be attached to an
+     * operation string. */
+    const unknown<size_t> opstring_to_width(const std::string string);
 }
 
 #endif

@@ -19,8 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <libflo/parse.h++>
-#include <libflo/infer_widths.h++>
+#include <libflo/flo.h++>
 #include <libflo/version.h++>
 #include <string.h>
 #include "version.h"
@@ -43,19 +42,10 @@ int main(int argc, const char **argv)
         exit(0);
     }
 
-    /* Opens the file specified on the command-line as a Flo file,
-     * returning a list of Flo nodes. */
-    auto ukw = libflo::parse(argv[1]);
+    auto flo = libflo::flo::parse(argv[1]);
 
-    /* The list returned above may not have a width associated with
-     * every operation.  Calling infer_widths() produces a new list of
-     * nodes that has an explicit width attached to every
-     * operation. */
-    auto kw = libflo::infer_widths(ukw);
-
-    /* Walks through the node list and writes every node to stdout.
-     * This produces a properly formatted list of nodes, each of which
-     * has an attached width. */
-    for (auto it = kw.nodes(); !it.done(); ++it)
-        (*it)->writeln(stdout);
+    for (auto it = flo.operations(); !it.done(); ++it) {
+        auto op = *it;
+        op->writeln(stdout);
+    }
 }
