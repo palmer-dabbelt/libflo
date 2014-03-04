@@ -29,24 +29,21 @@
 #include <vector>
 
 namespace libflo {
-    class operation;
-    typedef std::shared_ptr<operation> operation_ptr;
-
     /* Operations represent the computation of a node -- this means
      * they take as their input the values of some nodes and produce
      * as an output the values of other nodes. */
     class operation {
     private:
-        node_ptr _d;
+        std::shared_ptr<node> _d;
         unknown<size_t> _width;
         const opcode _op;
-        const std::vector<node_ptr> _s;
+        const std::vector<std::shared_ptr<node>> _s;
 
     private:
-        operation(node_ptr& dest,
+        operation(std::shared_ptr<node>& dest,
                   const unknown<size_t>& width,
                   const opcode& op,
-                  const std::vector<node_ptr>& s);
+                  const std::vector<std::shared_ptr<node>>& s);
 
     public:
         /* Accessor functions. */
@@ -59,9 +56,10 @@ namespace libflo {
         /* Allows access to the destination, the source array, or the
          * operand array -- this just contains two indexing schemes
          * for the nodes this operation can see. */
-        const node_ptr d(void) const { return _d; }
-        const node_ptr s(size_t i) const { return _s[i]; }
-        const node_ptr o(size_t i) const { return (i == 0) ? d() : s(i-1); }
+        const std::shared_ptr<node> d(void) const { return _d; }
+        const std::shared_ptr<node> s(size_t i) const { return _s[i]; }
+        const std::shared_ptr<node> o(size_t i) const
+            { return (i == 0) ? d() : s(i-1); }
 
         /* Attempts to perform local width inference.  In other words,
          * infers the width of this node by only looking at the nodes
@@ -90,11 +88,12 @@ namespace libflo {
     public:
         /* Parses an operation, looking up the sources and
          * destinations by string in the provided map. */
-        static operation_ptr parse(const std::map<std::string, node_ptr>& n,
-                                   const std::string d,
-                                   const opcode& op,
-                                   const unknown<size_t>& width,
-                                   const std::vector<std::string>& s);
+        static std::shared_ptr<operation>
+        parse(const std::map<std::string, std::shared_ptr<node>>& n,
+              const std::string d,
+              const opcode& op,
+              const unknown<size_t>& width,
+              const std::vector<std::string>& s);
     };
 }
 

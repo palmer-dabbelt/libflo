@@ -68,7 +68,7 @@ void node::update_cycle(const unknown<size_t>& cycle)
         _cycle = cycle;
 }
 
-node_ptr node::parse(const std::string d, const opcode& op,
+std::shared_ptr<node> node::parse(const std::string d, const opcode& op,
                        const unknown<size_t>& width,
                        const std::vector<std::string>& s)
 {
@@ -155,9 +155,9 @@ node_ptr node::parse(const std::string d, const opcode& op,
     abort();
 }
 
-node_ptr node::constant(int64_t value)
+std::shared_ptr<node> node::constant(int64_t value)
 {
-    return node_ptr(new node(std::to_string(value),
+    return std::shared_ptr<node>(new node(std::to_string(value),
                              unknown<size_t>(),
                              unknown<size_t>(),
                              false,
@@ -166,11 +166,11 @@ node_ptr node::constant(int64_t value)
                         ));
 }
 
-node_ptr node::reg(const std::string name,
+std::shared_ptr<node> node::reg(const std::string name,
                    const unknown<size_t>& width,
                    const unknown<size_t>& cycle)
 {
-    return node_ptr(new node(name,
+    return std::shared_ptr<node>(new node(name,
                              width,
                              unknown<size_t>(),
                              false,
@@ -179,11 +179,11 @@ node_ptr node::reg(const std::string name,
                         ));
 }
 
-node_ptr node::mem(const std::string name,
+std::shared_ptr<node> node::mem(const std::string name,
                    const unknown<size_t>& width,
                    const unknown<size_t>& depth)
 {
-    return node_ptr(new node(name,
+    return std::shared_ptr<node>(new node(name,
                              width,
                              depth,
                              true,

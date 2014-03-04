@@ -29,9 +29,6 @@
 #include <vector>
 
 namespace libflo {
-    class node;
-    typedef std::shared_ptr<node> node_ptr;
-
     /* Everything in the dataflow machine that can have a value is
      * considered a node. */
     class node {
@@ -79,17 +76,17 @@ namespace libflo {
         /* Parses a node to determine exactly what sort of node it
          * is.  You probably don't want to bother with this unless
          * you're inside the parser... */
-        static node_ptr parse(const std::string d,
+        static std::shared_ptr<node> parse(const std::string d,
                               const opcode& op,
                               const unknown<size_t>& width,
                               const std::vector<std::string>& s);
 
         /* Generates a new constant-valued node. */
-        static node_ptr constant(int64_t value);
-        static node_ptr reg(const std::string name,
+        static std::shared_ptr<node> constant(int64_t value);
+        static std::shared_ptr<node> reg(const std::string name,
                             const unknown<size_t>& width,
                             const unknown<size_t>& cycle);
-        static node_ptr mem(const std::string name,
+        static std::shared_ptr<node> mem(const std::string name,
                             const unknown<size_t>& width,
                             const unknown<size_t>& depth);
     };

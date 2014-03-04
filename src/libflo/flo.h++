@@ -25,6 +25,7 @@
 #include "node.h++"
 #include "operation.h++"
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -37,30 +38,30 @@ namespace libflo {
     public:
         class op_iter {
         private:
-            const std::vector<operation_ptr> _ops;
-            std::vector<operation_ptr>::const_iterator _it;
+            const std::vector<std::shared_ptr<operation>> _ops;
+            std::vector<std::shared_ptr<operation>>::const_iterator _it;
 
         public:
-            op_iter(const std::vector<operation_ptr> ops)
+            op_iter(const std::vector<std::shared_ptr<operation>> ops)
                 : _ops(ops),
                   _it(_ops.begin())
                 {
                 }
 
-            operation_ptr operator*(void) const { return *_it; }
+            std::shared_ptr<operation> operator*(void) const { return *_it; }
             bool done(void) const { return _it == _ops.end(); }
             void operator++(void) { ++_it; }
         };
 
     private:
-        const std::map<std::string, node_ptr> _nodes;
-        const std::vector<operation_ptr> _ops;
+        const std::map<std::string, std::shared_ptr<node>> _nodes;
+        const std::vector<std::shared_ptr<operation>> _ops;
 
     protected:
         /* Creates a Flo store given a set of node elements and a
          * list of operations to be performed. */
-        flo(const std::map<std::string, node_ptr>& nodes,
-            const std::vector<operation_ptr>& ops);
+        flo(const std::map<std::string, std::shared_ptr<node>>& nodes,
+            const std::vector<std::shared_ptr<operation>>& ops);
 
     public:
         /* Parses the given file as a Flo file. */

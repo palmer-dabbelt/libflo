@@ -27,10 +27,10 @@ using namespace libflo;
 #define LINE_MAX 1024
 #endif
 
-operation::operation(node_ptr& dest,
+operation::operation(std::shared_ptr<node>& dest,
                      const unknown<size_t>& width,
                      const opcode& op,
-                     const std::vector<node_ptr>& s)
+                     const std::vector<std::shared_ptr<node>>& s)
     : _d(dest),
       _width(width),
       _op(op),
@@ -260,7 +260,7 @@ void operation::must_match(const std::vector<size_t>& o)
     /* Attempt to find a single known width operand so we can infer
      * the widths of everything else.  Check to make sure any widths
      * actually match while doing this. */
-    node_ptr known = NULL;
+    std::shared_ptr<node> known = NULL;
     for (auto it = o.begin(); it != o.end(); ++it) {
         auto node = this->o(*it);
         if (node->known_width()) {
@@ -347,11 +347,12 @@ void operation::after(const std::vector<size_t>& o)
     _d->update_cycle(min_cycle + 1);
 }
 
-operation_ptr operation::parse(const std::map<std::string, node_ptr>& n,
-                               const std::string d,
-                               const opcode& op,
-                               const unknown<size_t>& width,
-                               const std::vector<std::string>& s)
+std::shared_ptr<operation>
+operation::parse(const std::map<std::string, std::shared_ptr<node>>& n,
+                 const std::string d,
+                 const opcode& op,
+                 const unknown<size_t>& width,
+                 const std::vector<std::string>& s)
 {
     /* Here we look up the actual node data for everything this
      * operation touches. */
@@ -362,7 +363,7 @@ operation_ptr operation::parse(const std::map<std::string, node_ptr>& n,
     }
     auto dp = dl->second;
 
-    std::vector<node_ptr> sp;
+    std::vector<std::shared_ptr<node>> sp;
     for (auto it = s.begin(); it != s.end(); ++it) {
         /* Try and find this source in the list of nodes that we know
          * about. */
@@ -426,7 +427,7 @@ operation_ptr operation::parse(const std::map<std::string, node_ptr>& n,
     case opcode::SUB:
     case opcode::WR:
     case opcode::XOR:
-        return operation_ptr(new operation(dp, width, op, sp));
+        return std::shared_ptr<operation>(new operation(dp, width, op, sp));
         break;
 
     case opcode::EAT:
