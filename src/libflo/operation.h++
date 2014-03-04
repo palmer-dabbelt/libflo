@@ -311,6 +311,65 @@ namespace libflo {
                 fprintf(f, "\n");
             }
 
+        /* Produces a string that contains the contents of this
+         * operation. */
+        const std::string to_string(void) const
+            {
+                char opstr[LINE_MAX];
+                if (_width.known()) {
+                    snprintf(opstr, LINE_MAX, "%s/%lu",
+                             opcode_to_string(_op).c_str(),
+                             _width.value()
+                        );
+                } else {
+                    snprintf(opstr, LINE_MAX, "%s",
+                             opcode_to_string(_op).c_str()
+                        );
+                }
+
+                char buffer[LINE_MAX];
+                switch (_s.size()) {
+                case 0:
+                    snprintf(buffer, LINE_MAX, "%s = %s",
+                             _d.c_str(),
+                             opstr
+                        );
+                    break;
+
+                case 1:
+                    snprintf(buffer, LINE_MAX, "%s = %s %s",
+                             _d.c_str(),
+                             opstr,
+                             _s[0].c_str()
+                        );
+                    break;
+
+                case 2:
+                    snprintf(buffer, LINE_MAX, "%s = %s %s %s",
+                             _d.c_str(),
+                             opstr,
+                             _s[0].c_str(),
+                             _s[1].c_str()
+                        );
+                    break;
+
+                case 3:
+                    snprintf(buffer, LINE_MAX, "%s = %s %s %s %s",
+                             _d.c_str(),
+                             opstr,
+                             _s[0].c_str(),
+                             _s[1].c_str(),
+                             _s[2].c_str()
+                        );
+                    break;
+
+                default:
+                    fprintf(stderr, "Wrong number of sources\n");
+                    abort();
+                }
+                return buffer;
+            }
+
     private:
         /* Here's some helper functions for width inference.  They
          * shouldn't be useful to anyone else. */
