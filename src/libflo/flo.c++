@@ -119,5 +119,46 @@ const flo flo::parse(const std::string filename)
         }
     }
 
+    /* Make an attempt to schedule this computation in dataflow order
+     * to something can actually be computed using this program. */
+    for (size_t i = 0; i < nodes.size(); ++i) {
+        for (auto it = ops.begin(); it != ops.end(); ++it) {
+            auto op = *it;
+            op->try_schedule();
+        }
+
+        /* Check to see how many unknown widths still remain -- if
+         * there's none then we're done with this phase and can
+         * continue, otherwise attempt to keep going. */
+        size_t remaining_unknowns = 0;
+        for (auto it = ops.begin(); it != ops.end(); ++it) {
+            auto op = *it;
+            if (!op->known_width())
+                remaining_unknowns++;
+        }
+        if (remaining_unknowns == 0)
+            break;
+    }
+
+    /* If we've made it this far then hopefully we've scheduled every
+     * operation -- if we don't then bail out. */
+    {
+        size_t remaining_unknows = 0;
+        for (auto it = ops.begin(); it != ops.end(); ++it) {
+            auto op = *it;
+            if (!op->known_cycle()) {
+                fprintf(stderr, "Unable to schedule node '%s'\n",
+                        op->d()->name().c_str());
+                remaining_unknows++;
+            }
+        }
+
+        if (remaining_unknows > 0) {
+            fprintf(stderr, "Aborting with %lu nodes remaining\n",
+                    remaining_unknows);
+            abort();
+        }
+    }
+
     return flo(nodes, ops);
 }

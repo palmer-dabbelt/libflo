@@ -49,13 +49,12 @@ namespace libflo {
                   const std::vector<node_ptr>& s);
 
     public:
-        /* Attempts to perform local width inference.  In other words,
-         * infers the width of this node by only looking at the nodes
-         * directly used by this operation. */
-        void try_infer_width(void);
+        /* Accessor functions. */
+        size_t width(void) const { return _width.value(); }
+        bool known_width(void) const { return _width.known(); }
 
-        /* Writes this operation out to standard out as a string. */
-        void writeln(FILE *f) const;
+        size_t cycle(void) const { return _d->cycle(); }
+        bool known_cycle(void) const { return _d->known_cycle(); }
 
         /* Allows access to the destination, the source array, or the
          * operand array -- this just contains two indexing schemes
@@ -64,12 +63,29 @@ namespace libflo {
         const node_ptr s(size_t i) const { return _s[i]; }
         const node_ptr o(size_t i) const { return (i == 0) ? d() : s(i-1); }
 
+        /* Attempts to perform local width inference.  In other words,
+         * infers the width of this node by only looking at the nodes
+         * directly used by this operation. */
+        void try_infer_width(void);
+
+        /* Attempts to perform local scheduling -- note that this is
+         * just a simple schedule, it produces the first cycle at
+         * which this operation could possibly run if dataflow order
+         * is observed.. */
+        void try_schedule(void);
+
+        /* Writes this operation out to standard out as a string. */
+        void writeln(FILE *f) const;
+
     private:
         /* Here's some helper functions for width inference.  They
          * shouldn't be useful to anyone else. */
         void must_match(const std::vector<size_t>& o);
         void must_sum(size_t o, const std::vector<size_t>& i);
         void must_be(size_t o, size_t w);
+
+        /* Used for scheduling. */
+        void after(const std::vector<size_t>& o);
 
     public:
         /* Parses an operation, looking up the sources and

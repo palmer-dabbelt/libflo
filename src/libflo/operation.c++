@@ -179,6 +179,68 @@ void operation::try_infer_width(void)
     }
 }
 
+void operation::try_schedule(void)
+{
+    switch (_op) {
+        /* These operations are just always ready to issue. */
+    case opcode::IN:
+    case opcode::REG:
+    case opcode::RND:
+    case opcode::RST:
+        _d->update_cycle(0);
+        break;
+
+        /* Most operations can issue after all sources have issued,
+         * they've just got a different number of sources. */
+    case opcode::LIT:
+    case opcode::NEG:
+    case opcode::MOV:
+    case opcode::NOT:
+    case opcode::OUT:
+        after(std::vector<size_t>({1}));
+        break;
+
+    case opcode::ADD:
+    case opcode::AND:
+    case opcode::OR:
+    case opcode::SUB:
+    case opcode::XOR:
+    case opcode::EQ:
+    case opcode::GTE:
+    case opcode::LT:
+    case opcode::NEQ:
+    case opcode::MUL:
+    case opcode::CAT:
+    case opcode::ARSH:
+    case opcode::LOG2:
+    case opcode::LSH:
+    case opcode::MSK:
+    case opcode::RSH:
+        after(std::vector<size_t>({1, 2}));
+        break;
+
+    case opcode::MUX:
+        after(std::vector<size_t>({1, 2, 3}));
+        break;
+
+        /* FIXME: I have no idea what memory operations should do... */
+    case opcode::LD:
+    case opcode::RD:
+    case opcode::ST:
+    case opcode::WR:
+        fprintf(stderr, "FIXME: infer widths for memory ops\n");
+        abort();
+        break;
+
+        /* These operations just don't do anything, so it doesn't make
+         * any sense to infer widths at all. */
+    case opcode::EAT:
+    case opcode::MEM:
+    case opcode::NOP:
+        break;
+    }
+}
+
 void operation::writeln(FILE *f) const
 {
     fprintf(f, "%s = %s", _d->name().c_str(), opcode_to_string(_op).c_str());
@@ -270,6 +332,19 @@ void operation::must_sum(size_t o, const std::vector<size_t>& i)
 void operation::must_be(size_t o, size_t w)
 {
     this->o(o)->update_width(unknown<size_t>(w));
+}
+
+void operation::after(const std::vector<size_t>& o)
+{
+    size_t min_cycle = 0;
+    for (auto it = o.begin(); it != o.end(); ++it) {
+        if (this->o(*it)->known_cycle() == false)
+            return;
+
+        if (this->o(*it)->cycle() > min_cycle)
+            min_cycle = this->o(*it)->cycle();
+    }
+    _d->update_cycle(min_cycle + 1);
 }
 
 operation_ptr operation::parse(const std::map<std::string, node_ptr>& n,

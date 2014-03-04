@@ -41,31 +41,39 @@ namespace libflo {
         unknown<size_t> _depth;
         const bool _is_mem;
         const bool _is_const;
+        unknown<size_t> _cycle;
 
     private:
         node(const std::string name,
-             const unknown<size_t>& width);
-
-        node(const std::string name,
              const unknown<size_t>& width,
-             const unknown<size_t>& depth);
-
-        node(int64_t value);
+             const unknown<size_t>& depth,
+             bool is_mem,
+             bool is_const,
+             unknown<size_t> cycle);
 
     public:
         /* Accessor functions. */
         const std::string& name(void) const { return _name; }
+
         size_t width(void) const { return _width.value(); }
         bool known_width(void) const { return _width.known(); }
+
         size_t depth(void) const { return _depth.value(); }
         bool known_depth(void) const { return _depth.known(); }
+
         bool is_mem(void) const { return _is_mem; }
         bool is_reg(void) const { return !_is_mem; }
         bool is_const(void) const { return _is_const; }
 
-        /* Updates a width with a new node -- this will fail if both
+        size_t cycle(void) const { return _cycle.value(); }
+        bool known_cycle(void) const { return _cycle.known(); }
+
+        /* Updates a node with a new width -- this will fail if both
          * widths are known and they don't match. */
         void update_width(const unknown<size_t>& width);
+
+        /* Updates a node with a new cycle, failing on mismatch. */
+        void update_cycle(const unknown<size_t>& cycle);
 
     public:
         /* Parses a node to determine exactly what sort of node it
@@ -78,6 +86,12 @@ namespace libflo {
 
         /* Generates a new constant-valued node. */
         static node_ptr constant(int64_t value);
+        static node_ptr reg(const std::string name,
+                            const unknown<size_t>& width,
+                            const unknown<size_t>& cycle);
+        static node_ptr mem(const std::string name,
+                            const unknown<size_t>& width,
+                            const unknown<size_t>& depth);
     };
 }
 
