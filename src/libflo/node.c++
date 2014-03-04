@@ -173,7 +173,6 @@ unsigned node::width(void) const
     case libflo::opcode::LSH:
     case libflo::opcode::MEM:
     case libflo::opcode::MOV:
-    case libflo::opcode::MUL:
     case libflo::opcode::MUX:
     case libflo::opcode::MSK:
     case libflo::opcode::NEG:
@@ -196,6 +195,9 @@ unsigned node::width(void) const
         if (_altwidth == (unsigned)-1)
             return _op.width();
         return _altwidth;
+
+     case libflo::opcode::MUL:
+         return _op.width() / 2;
     }
 
     fprintf(stderr, "Made it past an opcode switch\n");

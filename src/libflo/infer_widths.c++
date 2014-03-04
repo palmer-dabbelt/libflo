@@ -690,7 +690,7 @@ node_ptr remap(node_ptr o, const known_map &map)
                     o->s(0).c_str());
             abort();
         }
-        return o->with_width(l->second->width());
+        return o->with_width(l->second->outwid());
     }
 
         /* Right shift requires a bit of magic: the "width" is
@@ -703,7 +703,7 @@ node_ptr remap(node_ptr o, const known_map &map)
                     o->s(0).c_str());
             abort();
         }
-        return o->with_alt_width(l->second->width());
+        return o->with_alt_width(l->second->outwid());
     }
 
         /* Yet another special case: cat actually gets provided the
