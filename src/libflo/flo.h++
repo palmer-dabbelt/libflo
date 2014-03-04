@@ -76,9 +76,21 @@ namespace libflo {
          * operations. */
         op_iter operations(void) const { return op_iter(_ops); }
 
-    public:
         /* Parses the given file as a Flo file. */
-        static const flo parse(const std::string filename)
+        static const std::shared_ptr<flo> parse(const std::string filename)
+            {
+                return parse_help<flo>(filename);
+            }
+
+    protected:
+        /* Here's the code that does the actual parsing work -- note
+         * that this should only be used by subclasses of Flo, the
+         * above non-templated version is the correct one to use
+         * otherwise.  This version allows you to specify what sort of
+         * flo you need to output in case you need to */
+        template <class flo_t>
+        static const std::shared_ptr<flo_t>
+        parse_help(const std::string filename)
             {
                 /* Reads a file line by line, saving it into memory. */
                 std::vector<filenode> lines;
@@ -215,7 +227,7 @@ namespace libflo {
                     }
                 }
 
-                return flo(nodes, ops);
+                return std::shared_ptr<flo_t>(new flo_t(nodes, ops));
             }
     };
 }
