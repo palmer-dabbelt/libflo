@@ -23,9 +23,9 @@ CONFIG      += find_library_headers
 LIBRARIES   += pkgconfig/flo.pc
 SOURCES     += libflo/flo.pc
 
-BINARIES    += flo-infer-widths
+BINARIES    += flo-canon
 DEPLIBS     += flo
-SOURCES     += infer_widths.c++
+SOURCES     += canon.c++
 TESTSRC     += counter-5.bash
 TESTSRC     += counter-16.bash
 TESTSRC     += counter-32.bash
