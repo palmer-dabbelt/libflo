@@ -43,7 +43,7 @@ namespace libflo {
         const opcode _op;
         const std::vector<std::shared_ptr<node_t>> _s;
 
-    private:
+    protected:
         operation(std::shared_ptr<node_t>& dest,
                   const unknown<size_t>& width,
                   const opcode& op,
@@ -469,7 +469,8 @@ namespace libflo {
     public:
         /* Parses an operation, looking up the sources and
          * destinations by string in the provided map. */
-        static std::shared_ptr<operation>
+        template<class operation_t>
+        static std::shared_ptr<operation_t>
         parse(const std::map<std::string, std::shared_ptr<node_t>>& n,
               const std::string d,
               const opcode& op,
@@ -506,7 +507,7 @@ namespace libflo {
                         }
 
                         auto val = atoll(buffer);
-                        sp.push_back(node::constant(val));
+                        sp.push_back(node::constant<node_t>(val));
                     } else {
                         /* The lookup didn't fail, so just directly
                          * add that node to the list of sources. */
@@ -550,10 +551,10 @@ namespace libflo {
                 case opcode::SUB:
                 case opcode::WR:
                 case opcode::XOR:
-                    return std::shared_ptr<operation>(new operation(dp,
-                                                                    width,
-                                                                    op,
-                                                                    sp)
+                    return std::shared_ptr<operation_t>(new operation_t(dp,
+                                                                        width,
+                                                                        op,
+                                                                        sp)
                         );
                     break;
 

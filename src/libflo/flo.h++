@@ -30,6 +30,10 @@
 #include <string>
 #include <vector>
 
+#ifndef LINE_MAX
+#define LINE_MAX 1024
+#endif
+
 namespace libflo {
     /* Stores a single Flo object: this holds all the information
      * about a dataflow computation that's necessary to compute it.
@@ -143,10 +147,10 @@ namespace libflo {
                 std::map<std::string, node_ptr> nodes;
                 for (auto it = lines.begin(); it != lines.end(); ++it) {
                     auto line = *it;
-                    auto node = node::parse(line.d,
-                                            line.opcode,
-                                            line.width,
-                                            line.s);
+                    auto node = node::parse<node_t>(line.d,
+                                                    line.opcode,
+                                                    line.width,
+                                                    line.s);
                     if (node != NULL) {
                         nodes[node->name()] = node;
                     }
@@ -159,11 +163,13 @@ namespace libflo {
                 std::vector<operation_ptr> ops;
                 for (auto it = lines.begin(); it != lines.end(); ++it) {
                     auto line = *it;
-                    auto op = operation<node>::parse(nodes,
-                                                     line.d,
-                                                     line.opcode,
-                                                     line.width,
-                                                     line.s);
+                    auto op = operation_t::template parse<operation_t>(
+                        nodes,
+                        line.d,
+                        line.opcode,
+                        line.width,
+                        line.s
+                        );
                     if (op != NULL)
                         ops.push_back(op);
                 }

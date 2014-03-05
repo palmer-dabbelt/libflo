@@ -40,7 +40,7 @@ namespace libflo {
         const bool _is_const;
         unknown<size_t> _cycle;
 
-    private:
+    protected:
         node(const std::string name,
              const unknown<size_t>& width,
              const unknown<size_t>& depth,
@@ -76,19 +76,153 @@ namespace libflo {
         /* Parses a node to determine exactly what sort of node it
          * is.  You probably don't want to bother with this unless
          * you're inside the parser... */
-        static std::shared_ptr<node> parse(const std::string d,
-                              const opcode& op,
-                              const unknown<size_t>& width,
-                              const std::vector<std::string>& s);
+        template <class node_t>
+        static std::shared_ptr<node_t>
+        parse(const std::string d,
+              const opcode& op,
+              const unknown<size_t>& width,
+              const std::vector<std::string>& s)
+            {
+                switch (op) {
+                    /* These operations produce a fixed output width
+                     * and are always availiable -- essentially theh
+                     * easiest one. */
+                case opcode::RST:
+                    return reg<node_t>(d,
+                                       unknown<size_t>(1),
+                                       unknown<size_t>(0)
+                        );
+
+                    /* These operations simply produce a single bit as
+                     * an output regardless of their input widths. */
+                case opcode::EQ:
+                case opcode::GTE:
+                case opcode::LT:
+                case opcode::NEQ:
+                    return reg<node_t>(d,
+                                       unknown<size_t>(1),
+                                       unknown<size_t>());
+
+                    /* These operations produce a variable output
+                     * width but are always ready. */
+                case opcode::IN:
+                case opcode::REG:
+                    return reg<node_t>(d,
+                                       width,
+                                       unknown<size_t>(0));
+
+                    /* These are "normal" nodes, which means their
+                     * output width is specified directly by the
+                     * operation. */
+                case opcode::ADD:
+                case opcode::AND:
+                case opcode::ARSH:
+                case opcode::LD:
+                case opcode::LIT:
+                case opcode::LOG2:
+                case opcode::LSH:
+                case opcode::MOV:
+                case opcode::MSK:
+                case opcode::MUL:
+                case opcode::MUX:
+                case opcode::NEG:
+                case opcode::NOT:
+                case opcode::OR:
+                case opcode::OUT:
+                case opcode::RD:
+                case opcode::RND:
+                case opcode::RSH:
+                case opcode::ST:
+                case opcode::SUB:
+                case opcode::WR:
+                case opcode::XOR:
+                    return reg<node_t>(d,
+                                       width,
+                                       unknown<size_t>());
+                    break;
+
+                    /* Some operations don't have their output width
+                     * specified by the Flo file but instead must have
+                     * this width somehow inferred. */
+                case opcode::CAT:
+                    return reg<node_t>(d,
+                                       unknown<size_t>(),
+                                       unknown<size_t>());
+
+                    /* Memories are special: they have a depth
+                     * paramater as well as a width parameter.  It's
+                     * possible to specify the depth explicitly, but
+                     * there's also some notion of being able to
+                     * automatically detect the width. */
+                case opcode::MEM:
+                {
+                    if (s.size() == 0)
+                        return mem<node_t>(d, width, unknown<size_t>());
+
+                    long long depth = atoll(s[0].c_str());
+                    if (depth == -1)
+                        return mem<node_t>(d, width, unknown<size_t>());
+
+                    size_t sd = (size_t)depth;
+                    return mem<node_t>(d, width, sd);
+
+                    break;
+                }
+
+                /* These operations don't actually produce a node. */
+                case opcode::EAT:
+                case opcode::NOP:
+                    return NULL;
+                    break;
+                }
+
+                fprintf(stderr, "Unhandled switch case\n");
+                abort();
+            }
 
         /* Generates a new constant-valued node. */
-        static std::shared_ptr<node> constant(int64_t value);
-        static std::shared_ptr<node> reg(const std::string name,
+        template<class node_t>
+        static std::shared_ptr<node_t> constant(int64_t value)
+            {
+                auto name = std::to_string(value);
+                return std::shared_ptr<node_t>(new node_t(name,
+                                                          unknown<size_t>(),
+                                                          unknown<size_t>(),
+                                                          false,
+                                                          true,
+                                                          unknown<size_t>(0)
+                                                   ));
+            }
+
+
+        template<class node_t>
+        static std::shared_ptr<node_t> reg(const std::string name,
+                                         const unknown<size_t>& width,
+                                         const unknown<size_t>& cycle)
+            {
+                return std::shared_ptr<node_t>(new node_t(name,
+                                                          width,
+                                                          unknown<size_t>(),
+                                                          false,
+                                                          false,
+                                                          cycle
+                                                   ));
+            }
+
+        template<class node_t>
+        static std::shared_ptr<node_t> mem(const std::string name,
                             const unknown<size_t>& width,
-                            const unknown<size_t>& cycle);
-        static std::shared_ptr<node> mem(const std::string name,
-                            const unknown<size_t>& width,
-                            const unknown<size_t>& depth);
+                            const unknown<size_t>& depth)
+            {
+                return std::shared_ptr<node_t>(new node_t(name,
+                                                          width,
+                                                          depth,
+                                                          true,
+                                                          false,
+                                                          unknown<size_t>()
+                                                   ));
+            }
+
     };
 }
 
