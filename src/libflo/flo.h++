@@ -25,6 +25,7 @@
 #include "filenode.h++"
 #include "node.h++"
 #include "operation.h++"
+#include <algorithm>
 #include <map>
 #include <memory>
 #include <string>
@@ -261,6 +262,8 @@ namespace libflo {
                         abort();
                     }
                 }
+
+                std::sort(ops.begin(), ops.end(), &operation_t::cmp_sched);
 
                 return std::shared_ptr<flo_t>(new flo_t(nodes, ops));
             }

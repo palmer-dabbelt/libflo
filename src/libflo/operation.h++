@@ -467,6 +467,13 @@ namespace libflo {
             }
 
     public:
+        /* Sorts operations based on their clock cycle. */
+        static bool cmp_sched(const std::shared_ptr<operation<node_t>> a,
+                              const std::shared_ptr<operation<node_t>> b)
+            {
+                return a->cycle() < b->cycle();
+            }
+
         /* Parses an operation, looking up the sources and
          * destinations by string in the provided map. */
         template<class operation_t>
