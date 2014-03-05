@@ -182,9 +182,8 @@ namespace libflo {
 
         /* Generates a new constant-valued node. */
         template<class node_t>
-        static std::shared_ptr<node_t> constant(int64_t value)
+        static std::shared_ptr<node_t> constant(const std::string name)
             {
-                auto name = std::to_string(value);
                 return std::shared_ptr<node_t>(new node_t(name,
                                                           unknown<size_t>(),
                                                           unknown<size_t>(),

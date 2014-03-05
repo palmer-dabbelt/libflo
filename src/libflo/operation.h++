@@ -513,8 +513,7 @@ namespace libflo {
                             }
                         }
 
-                        auto val = atoll(buffer);
-                        sp.push_back(node::constant<node_t>(val));
+                        sp.push_back(node::constant<node_t>(buffer));
                     } else {
                         /* The lookup didn't fail, so just directly
                          * add that node to the list of sources. */
