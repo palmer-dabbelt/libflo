@@ -331,35 +331,35 @@ namespace libflo {
                 switch (_s.size()) {
                 case 0:
                     snprintf(buffer, LINE_MAX, "%s = %s",
-                             _d.c_str(),
+                             d()->name().c_str(),
                              opstr
                         );
                     break;
 
                 case 1:
                     snprintf(buffer, LINE_MAX, "%s = %s %s",
-                             _d.c_str(),
+                             d()->name().c_str(),
                              opstr,
-                             _s[0].c_str()
+                             s()->name().c_str()
                         );
                     break;
 
                 case 2:
                     snprintf(buffer, LINE_MAX, "%s = %s %s %s",
-                             _d.c_str(),
+                             d()->name().c_str(),
                              opstr,
-                             _s[0].c_str(),
-                             _s[1].c_str()
+                             s()->name().c_str(),
+                             t()->name().c_str()
                         );
                     break;
 
                 case 3:
                     snprintf(buffer, LINE_MAX, "%s = %s %s %s %s",
-                             _d.c_str(),
+                             d()->name().c_str(),
                              opstr,
-                             _s[0].c_str(),
-                             _s[1].c_str(),
-                             _s[2].c_str()
+                             s()->name().c_str(),
+                             t()->name().c_str(),
+                             u()->name().c_str()
                         );
                     break;
 
