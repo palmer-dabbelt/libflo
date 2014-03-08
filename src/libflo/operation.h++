@@ -143,6 +143,12 @@ namespace libflo {
                 return node_iter(o);
             }
 
+        /* Iterates through all the sources. */
+        node_iter sources(void) const
+            {
+                return node_iter(_s);
+            }
+
         /* Attempts to perform local width inference.  In other words,
          * infers the width of this node by only looking at the nodes
          * directly used by this operation. */
