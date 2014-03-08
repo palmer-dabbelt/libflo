@@ -91,14 +91,14 @@ namespace libflo {
         };
 
     private:
-        const std::map<std::string, node_ptr> _nodes;
-        const std::vector<operation_ptr> _ops;
+        std::map<std::string, node_ptr> _nodes;
+        std::vector<operation_ptr> _ops;
 
     protected:
         /* Creates a Flo store given a set of node elements and a
          * list of operations to be performed. */
-        flo(const std::map<std::string, node_ptr>& nodes,
-            const std::vector<operation_ptr>& ops)
+        flo(std::map<std::string, node_ptr>& nodes,
+            std::vector<operation_ptr>& ops)
             : _nodes(nodes),
               _ops(ops)
             {
@@ -115,6 +115,20 @@ namespace libflo {
             {
                 return parse_help<flo>(filename);
             }
+
+        /* Creates a new, empty, Flo structure that can be filled in
+         * later.  Note that I didn't make this a constructor because
+         * I didn't want to have an implicit empty constructor as this
+         * really shouldn't being used all that much... */
+        static std::shared_ptr<flo> empty(void)
+            {
+                std::map<std::string, node_ptr> nodes;
+                std::vector<operation_ptr> ops;
+                return std::shared_ptr<flo>(new flo(nodes, ops));
+            }
+
+        /* Adds a node to the list of nodes. */
+        void add_node(node_ptr n) { _nodes.push_back(n); }
 
     protected:
         /* Here's the code that does the actual parsing work -- note
