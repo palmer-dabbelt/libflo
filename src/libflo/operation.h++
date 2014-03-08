@@ -113,13 +113,16 @@ namespace libflo {
 
     public:
         /* Accessor functions. */
+        const unknown<size_t>& width_u(void) const { return _width; }
         size_t width(void) const { return _width.value(); }
         bool known_width(void) const { return _width.known(); }
 
+        const unknown<size_t>& cycle_u(void) const { return _d->cycle_u(); }
         size_t cycle(void) const { return _d->cycle(); }
         bool known_cycle(void) const { return _d->known_cycle(); }
 
         opcode op(void) const { return _op; }
+
 
         /* Allows access to the destination, the source array, or the
          * operand array -- this just contains two indexing schemes
@@ -615,6 +618,21 @@ namespace libflo {
 
                 fprintf(stderr, "Unhandled switch case\n");
                 abort();
+            }
+
+        /* This is really just a constructor, but I want to avoid
+         * anyone from passing around a raw pointer. */
+        static std::shared_ptr<operation<node_t>>
+        create(std::shared_ptr<node_t>& dest,
+                  const unknown<size_t>& width,
+                  const opcode& op,
+                  const std::vector<std::shared_ptr<node_t>>& s)
+            {
+                auto ptr = new operation<node_t>(dest,
+                                                 width,
+                                                 op,
+                                                 s);
+                return std::shared_ptr<operation<node_t>>(ptr);
             }
     };
 }
