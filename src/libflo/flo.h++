@@ -230,10 +230,14 @@ namespace libflo {
                      * this phase and can continue, otherwise attempt
                      * to keep going. */
                     size_t remaining_unknowns = 0;
-                    for (auto it = nodes.begin(); it != nodes.end(); ++it) {
-                        auto node = it->second;
-                        if (!node->known_width())
-                            remaining_unknowns++;
+                    for (auto it = ops.begin(); it != ops.end(); ++it) {
+                        auto op = *it;
+
+                        for (auto it = op->operands(); !it.done(); ++it) {
+                            auto node = *it;
+                            if (!node->known_width())
+                                remaining_unknowns++;
+                        }
                     }
                     if (remaining_unknowns == 0)
                         break;

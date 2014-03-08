@@ -49,6 +49,17 @@ int main(int argc, const char **argv)
 
     for (auto it = flof->operations(); !it.done(); ++it) {
         auto op = *it;
+
+        for (auto it = op->operands(); !it.done(); ++it) {
+            if (!(*it)->known_width()) {
+                fprintf(stderr, "Unknown width of node '%s' in '%s'\n",
+                        (*it)->name().c_str(),
+                        op->to_string().c_str()
+                    );
+                abort();
+            }
+        }
+
         op->writeln(stdout);
     }
 }

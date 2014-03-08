@@ -246,6 +246,15 @@ namespace libflo {
                 case opcode::LSH:
                 case opcode::MSK:
                 case opcode::RSH:
+                    /* FIXME: This is probably incorrect: here I just
+                     * attempt to infer the width of the constant
+                     * that's attached to a shift operation.  The
+                     * general idea is that this allows me to have
+                     * every constant's width inferred.  I don't
+                     * really think this is correct, though...*/
+                    if (o(2)->is_const()) {
+                        must_match(std::vector<size_t>({1, 2}));
+                    }
                     break;
 
                     /* These operations just don't do anything, so it
