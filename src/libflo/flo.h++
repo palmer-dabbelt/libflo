@@ -130,6 +130,34 @@ namespace libflo {
         /* Adds a node to the list of nodes. */
         void add_node(node_ptr n) { _nodes[n->name()] = n; }
 
+        /* Adds an operation to the list of operations, additionally
+         * adding every node if they don't already exist. */
+        void add_op(operation_ptr o)
+            {
+                for (auto it = o->operands(); !it.done(); ++it) {
+                    auto node = *it;
+
+                    auto l = _nodes.find(node->name());
+                    if (l == _nodes.end())
+                        add_node(node);
+                }
+
+                _ops.push_back(o);
+            }
+
+        /* These are just like the single-value version, but they add
+         * many nodes/ops. */
+        void add_nodes(const std::vector<node_ptr>& nodes)
+            {
+                for (auto it = nodes.begin(); it != nodes.end(); ++it)
+                    add_node(*it);
+            }
+        void add_ops(const std::vector<operation_ptr>& ops)
+            {
+                for (auto it = ops.begin(); it != ops.end(); ++it)
+                    add_op(*it);
+            }
+
     protected:
         /* Here's the code that does the actual parsing work -- note
          * that this should only be used by subclasses of Flo, the
