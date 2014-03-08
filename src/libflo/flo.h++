@@ -128,7 +128,7 @@ namespace libflo {
             }
 
         /* Adds a node to the list of nodes. */
-        void add_node(node_ptr n) { _nodes.push_back(n); }
+        void add_node(node_ptr n) { _nodes[n->name()] = n; }
 
     protected:
         /* Here's the code that does the actual parsing work -- note
