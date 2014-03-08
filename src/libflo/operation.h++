@@ -40,15 +40,15 @@ namespace libflo {
     public:
         class node_iter {
         private:
-            const typename std::vector<std::shared_ptr<node>> _nodes;
-            typename std::vector<std::shared_ptr<node>>::const_iterator _it;
+            const typename std::vector<std::shared_ptr<node_t>> _nodes;
+            typename std::vector<std::shared_ptr<node_t>>::const_iterator _it;
         public:
-            node_iter(const std::vector<std::shared_ptr<node>>& nodes)
+            node_iter(const std::vector<std::shared_ptr<node_t>>& nodes)
                 : _nodes(nodes),
                   _it(_nodes.begin())
                 {
                 }
-            std::shared_ptr<node> operator*(void) const { return *_it; }
+            std::shared_ptr<node_t> operator*(void) const { return *_it; }
             bool done(void) const { return _it == _nodes.end(); }
             void operator++(void) { ++_it; }
         };
@@ -136,7 +136,7 @@ namespace libflo {
          * destination) of this node. */
         node_iter operands(void) const
             {
-                std::vector<std::shared_ptr<node>> o;
+                std::vector<std::shared_ptr<node_t>> o;
                 o.push_back(_d);
                 for (auto it = _s.begin(); it != _s.end(); ++it)
                     o.push_back(*it);
