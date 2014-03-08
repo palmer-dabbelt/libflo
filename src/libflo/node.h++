@@ -65,6 +65,12 @@ namespace libflo {
         size_t cycle(void) const { return _cycle.value(); }
         bool known_cycle(void) const { return _cycle.known(); }
 
+        /* These access the unknown-type values, which are useful if
+         * you want to copy them somewhere else. */
+        const unknown<size_t>& width_u(void) const { return _width; }
+        const unknown<size_t>& depth_u(void) const { return _depth; }
+        const unknown<size_t>& cycle_u(void) const { return _cycle; }
+
         /* Updates a node with a new width -- this will fail if both
          * widths are known and they don't match. */
         void update_width(const unknown<size_t>& width);
