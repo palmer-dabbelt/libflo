@@ -37,6 +37,22 @@ namespace libflo {
      * they take as their input the values of some nodes and produce
      * as an output the values of other nodes. */
     template<class node_t> class operation {
+    public:
+        class node_iter {
+        private:
+            const typename std::vector<std::shared_ptr<node>> _nodes;
+            typename std::vector<std::shared_ptr<node>>::const_iterator _it;
+        public:
+            node_iter(const std::vector<std::shared_ptr<node>>& nodes)
+                : _nodes(nodes),
+                  _it(_nodes.begin())
+                {
+                }
+            std::shared_ptr<node> operator*(void) const { return *_it; }
+            bool done(void) const { return _it == _nodes.end(); }
+            void operator++(void) { ++_it; }
+        };
+
     private:
         std::shared_ptr<node_t> _d;
         unknown<size_t> _width;
@@ -115,6 +131,17 @@ namespace libflo {
         const std::shared_ptr<node_t> s(void) const { return s(0); }
         const std::shared_ptr<node_t> t(void) const { return s(1); }
         const std::shared_ptr<node_t> u(void) const { return s(2); }
+
+        /* Iterates through all the operands (both source and
+         * destination) of this node. */
+        node_iter operands(void) const
+            {
+                std::vector<std::shared_ptr<node>> o;
+                o.push_back(_d);
+                for (auto it = _s.begin(); it != _s.end(); ++it)
+                    o.push_back(*it);
+                return node_iter(o);
+            }
 
         /* Attempts to perform local width inference.  In other words,
          * infers the width of this node by only looking at the nodes
