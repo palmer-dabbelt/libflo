@@ -558,7 +558,9 @@ namespace libflo {
                             if (i == 0 && buffer[i] == '-')
                                 continue;
                             if (!isdigit(buffer[i])) {
-                                fprintf(stderr, "Found non-numeric constant\n");
+                                fprintf(stderr,
+                                        "Found non-numeric constant: '%s'\n",
+                                        buffer);
                                 abort();
                             }
                         }
