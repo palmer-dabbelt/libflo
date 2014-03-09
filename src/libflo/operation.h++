@@ -123,6 +123,8 @@ namespace libflo {
 
         opcode op(void) const { return _op; }
 
+        const std::vector<std::shared_ptr<node_t>> svec(void) const
+            { return _s; }
 
         /* Allows access to the destination, the source array, or the
          * operand array -- this just contains two indexing schemes
