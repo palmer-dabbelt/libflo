@@ -78,6 +78,7 @@ namespace libflo {
                 case opcode::AND:
                 case opcode::ARSH:
                 case opcode::CAT:
+                case opcode::CATD:
                 case opcode::EAT:
                 case opcode::EQ:
                 case opcode::GTE:
@@ -226,6 +227,7 @@ namespace libflo {
                     /* CAT is a special case: the output widtht is the
                      * sum of the input widths. */
                 case opcode::CAT:
+                case opcode::CATD:
                     must_sum(0, std::vector<size_t>({1, 2}));
                     if (o(2)->known_width())
                         _width = o(2)->width();
@@ -310,6 +312,7 @@ namespace libflo {
                 case opcode::NEQ:
                 case opcode::MUL:
                 case opcode::CAT:
+                case opcode::CATD:
                 case opcode::ARSH:
                 case opcode::LOG2:
                 case opcode::LSH:
@@ -578,6 +581,7 @@ namespace libflo {
                 case opcode::AND:
                 case opcode::ARSH:
                 case opcode::CAT:
+                case opcode::CATD:
                 case opcode::EQ:
                 case opcode::GTE:
                 case opcode::IN:

@@ -151,6 +151,7 @@ namespace libflo {
                      * specified by the Flo file but instead must have
                      * this width somehow inferred. */
                 case opcode::CAT:
+                case opcode::CATD:
                     return reg<node_t>(d,
                                        unknown<size_t>(),
                                        unknown<size_t>());

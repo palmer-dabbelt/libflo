@@ -32,6 +32,7 @@ namespace libflo {
         AND,
         ARSH,
         CAT,
+        CATD,
         EAT,
         EQ,
         GTE,
