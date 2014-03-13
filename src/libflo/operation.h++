@@ -457,6 +457,12 @@ namespace libflo {
                         if (known != NULL) {
                             if (known->width() != node->width()) {
                                 fprintf(stderr, "Mismatched widths\n");
+                                fprintf(stderr, "  %s: %lu\n",
+                                        known->name().c_str(),
+                                        known->width());
+                                fprintf(stderr, "  %s: %lu\n",
+                                        node->name().c_str(),
+                                        node->width());
                                 abort();
                             }
                         }
