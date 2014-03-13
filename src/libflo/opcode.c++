@@ -61,10 +61,10 @@ enum opcode libflo::string_to_opcode(const std::string op)
         return opcode::IN;
     } else if (str_starts(op, "lit")) {
         return opcode::LIT;
-    } else if (str_starts(op, "cat")) {
-        return opcode::CAT;
     } else if (str_starts(op, "catd")) {
         return opcode::CATD;
+    } else if (str_starts(op, "cat")) {
+        return opcode::CAT;
     } else if (str_starts(op, "rsh")) {
         return opcode::RSH;
     } else if (str_starts(op, "msk")) {
