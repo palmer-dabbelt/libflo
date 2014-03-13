@@ -36,3 +36,4 @@ TESTSRC     += gcd.bash
 TESTSRC     += adder4.bash
 TESTSRC     += iomux.bash
 TESTSRC     += counter-32-known.bash
+TESTSRC     += counter-250-mwe.bash
