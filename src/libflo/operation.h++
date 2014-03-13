@@ -361,6 +361,27 @@ namespace libflo {
                 fprintf(f, "\n");
             }
 
+        /* Writes a more verbose form on this operation out to a file.
+         * This may not be parseable by libflo, but it should be
+         * readable by a human and look a lot like a Flo file. */
+        void writeln_debug(FILE *f) const
+            {
+                fprintf(f, "%s = %s",
+                        _d->name().c_str(),
+                        opcode_to_string(_op).c_str());
+
+                if (_width.known())
+                    fprintf(f, "/%lu", _width.value());
+
+                for (auto it = _s.begin(); it != _s.end(); ++it) {
+                    fprintf(f, " %s", (*it)->name().c_str());
+                    if ((*it)->known_cycle())
+                        fprintf(f, "@%lu", (*it)->cycle());
+                }
+
+                fprintf(f, "\n");
+            }
+
         /* Produces a string that contains the contents of this
          * operation. */
         const std::string to_string(void) const

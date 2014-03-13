@@ -306,6 +306,11 @@ namespace libflo {
                     }
 
                     if (remaining_unknows > 0) {
+                        for (auto it = ops.begin(); it != ops.end(); ++it) {
+                            auto op = *it;
+                            op->writeln_debug(stderr);
+                        }
+
                         fprintf(stderr, "Aborting with %lu nodes remaining\n",
                                 remaining_unknows);
                         abort();
