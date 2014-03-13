@@ -284,7 +284,7 @@ namespace libflo {
                     size_t remaining_unknowns = 0;
                     for (auto it = ops.begin(); it != ops.end(); ++it) {
                         auto op = *it;
-                        if (!op->known_width())
+                        if (!op->known_cycle())
                             remaining_unknowns++;
                     }
                     if (remaining_unknowns == 0)
