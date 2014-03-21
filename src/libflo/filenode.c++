@@ -47,12 +47,14 @@ filenode filenode::parse(const std::string line)
 {
     /* Here we just use sscanf to parse the line because the format is
      * pretty fixed. */
-    char d[LINE_MAX], s0[LINE_MAX], s1[LINE_MAX], s2[LINE_MAX];
+    char d[LINE_MAX], s0[LINE_MAX], s1[LINE_MAX], s2[LINE_MAX], s3[LINE_MAX];
     char op[LINE_MAX];
-    int scanned = sscanf(line.c_str(), "%s = %s %s %s %s\n",
-                         d, op, s0, s1, s2);
+    int scanned = sscanf(line.c_str(), "%s = %s %s %s %s %s\n",
+                         d, op, s0, s1, s2, s3);
 
     switch (scanned) {
+    case 6:
+        return filenode(d, op, std::vector<std::string>({s0, s1, s2, s3}));
     case 5:
         return filenode(d, op, std::vector<std::string>({s0, s1, s2}));
     case 4:
