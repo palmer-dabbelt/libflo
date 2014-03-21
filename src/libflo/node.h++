@@ -171,7 +171,9 @@ namespace libflo {
                         return mem<node_t>(d, width, unknown<size_t>());
 
                     size_t sd = (size_t)depth;
-                    return mem<node_t>(d, width, sd);
+                    auto m = mem<node_t>(d, width, sd);
+                    m->update_cycle(0);
+                    return m;
 
                     break;
                 }

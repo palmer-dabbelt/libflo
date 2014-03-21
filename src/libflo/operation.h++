@@ -233,13 +233,26 @@ namespace libflo {
                         _width = o(2)->width();
                     break;
 
-                    /* FIXME: I have no idea what memory operations
-                     * should do... */
-                case opcode::LD:
+                    /* Memory operations are pretty much all special
+                     * cases. */
                 case opcode::RD:
-                case opcode::ST:
+                    /* As far as I can tell, the RD instruction looks
+                     * like the following: "VALUE = rd/WIDTH MEMORY
+                     * ADDRESS". */
+                    must_be(1, 1);
+                    break;
+
                 case opcode::WR:
+                    /* As far as I can tell, the WR instruction looks
+                     * like the following: "UNUSED = wr/WIDTH WEN
+                     * MEMORY ADDR DATA". */
+                    must_match(std::vector<size_t>({0, 4}));
+                    break;
+
+                case opcode::LD:
+                case opcode::ST:
                     fprintf(stderr, "FIXME: infer widths for memory ops\n");
+                    writeln_debug(stderr);
                     abort();
                     break;
 
@@ -325,13 +338,22 @@ namespace libflo {
                     after(std::vector<size_t>({1, 2, 3}));
                     break;
 
+                    /* Memory operations are pretty much all special
+                     * cases... */
+                case opcode::WR:
+                    after(std::vector<size_t>({1, 2, 3, 4}));
+                    break;
+
+                case opcode::RD:
+                    after(std::vector<size_t>({1, 2, 3}));
+                    break;
+
                     /* FIXME: I have no idea what memory operations
                      * should do... */
                 case opcode::LD:
-                case opcode::RD:
                 case opcode::ST:
-                case opcode::WR:
-                    fprintf(stderr, "FIXME: infer widths for memory ops\n");
+                    fprintf(stderr, "FIXME: schedule memory ops\n");
+                    writeln_debug(stderr);
                     abort();
                     break;
 
