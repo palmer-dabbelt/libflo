@@ -47,6 +47,19 @@ int main(int argc, const char **argv)
 
     auto flof = flo<node, operation<node> >::parse(argv[1]);
 
+    for (auto it = flof->nodes(); !it.done(); ++it) {
+        auto node = *it;
+
+        if (!node->is_mem())
+            continue;
+
+        fprintf(stdout, "%s = mem/%lu %lu\n",
+                node->name().c_str(),
+                node->width(),
+                node->depth()
+            );
+    }
+
     for (auto it = flof->operations(); !it.done(); ++it) {
         auto op = *it;
 
