@@ -137,6 +137,7 @@ namespace libflo {
         const std::shared_ptr<node_t> s(void) const { return s(0); }
         const std::shared_ptr<node_t> t(void) const { return s(1); }
         const std::shared_ptr<node_t> u(void) const { return s(2); }
+        const std::shared_ptr<node_t> v(void) const { return s(3); }
 
         /* Iterates through all the operands (both source and
          * destination) of this node. */
@@ -453,6 +454,17 @@ namespace libflo {
                              s()->name().c_str(),
                              t()->name().c_str(),
                              u()->name().c_str()
+                        );
+                    break;
+
+                case 4:
+                    snprintf(buffer, LINE_MAX, "%s = %s %s %s %s %s",
+                             d()->name().c_str(),
+                             opstr,
+                             s()->name().c_str(),
+                             t()->name().c_str(),
+                             u()->name().c_str(),
+                             v()->name().c_str()
                         );
                     break;
 
