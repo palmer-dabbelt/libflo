@@ -195,7 +195,7 @@ namespace libflo {
             {
                 return std::shared_ptr<node_t>(new node_t(name,
                                                           unknown<size_t>(),
-                                                          unknown<size_t>(),
+                                                          unknown<size_t>(0),
                                                           false,
                                                           true,
                                                           unknown<size_t>(0)
@@ -210,7 +210,7 @@ namespace libflo {
             {
                 return std::shared_ptr<node_t>(new node_t(name,
                                                           width,
-                                                          unknown<size_t>(),
+                                                          unknown<size_t>(0),
                                                           false,
                                                           false,
                                                           cycle
