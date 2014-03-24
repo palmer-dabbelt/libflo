@@ -208,8 +208,8 @@ namespace libflo {
 
         template<class node_t>
         static std::shared_ptr<node_t> reg(const std::string name,
-                                         const unknown<size_t>& width,
-                                         const unknown<size_t>& cycle)
+                                           const unknown<size_t>& width,
+                                           const unknown<size_t>& cycle)
             {
                 return std::shared_ptr<node_t>(new node_t(name,
                                                           width,
@@ -222,8 +222,8 @@ namespace libflo {
 
         template<class node_t>
         static std::shared_ptr<node_t> mem(const std::string name,
-                            const unknown<size_t>& width,
-                            const unknown<size_t>& depth)
+                                           const unknown<size_t>& width,
+                                           const unknown<size_t>& depth)
             {
                 return std::shared_ptr<node_t>(new node_t(name,
                                                           width,
@@ -233,7 +233,6 @@ namespace libflo {
                                                           unknown<size_t>()
                                                    ));
             }
-
     };
 }
 
