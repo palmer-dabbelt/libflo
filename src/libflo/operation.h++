@@ -389,10 +389,13 @@ namespace libflo {
          * readable by a human and look a lot like a Flo file. */
         void writeln_debug(FILE *f) const
             {
-                fprintf(f, "%s = %s",
-                        _d->name().c_str(),
-                        opcode_to_string(_op).c_str());
+                fprintf(f, "%s",
+                        _d->name().c_str());
+                if (_d->known_width())
+                    fprintf(f, "/%lu", _d->width());
 
+                fprintf(f, " = %s",
+                        opcode_to_string(_op).c_str());
                 if (_width.known())
                     fprintf(f, "/%lu", _width.value());
 
@@ -400,6 +403,8 @@ namespace libflo {
                     fprintf(f, " %s", (*it)->name().c_str());
                     if ((*it)->known_cycle())
                         fprintf(f, "@%lu", (*it)->cycle());
+                    if ((*it)->known_width())
+                        fprintf(f, "/%lu", (*it)->width());
                 }
 
                 fprintf(f, "\n");
@@ -497,6 +502,7 @@ namespace libflo {
                                 fprintf(stderr, "  %s: %lu\n",
                                         node->name().c_str(),
                                         node->width());
+                                writeln_debug(stderr);
                                 abort();
                             }
                         }
@@ -513,6 +519,11 @@ namespace libflo {
                 for (auto it = o.begin(); it != o.end(); ++it) {
                     auto node = this->o(*it);
                     node->update_width(known->width());
+
+#ifdef DEBUG_WIDTH_INFERENCE
+                    fprintf(stderr, "infer %s: ", node->name().c_str());
+                    writeln_debug(stderr);
+#endif
                 }
             }
 
@@ -545,6 +556,7 @@ namespace libflo {
                  * matches. */
                 if (unknows == 0 && i_sum != o_sum) {
                     fprintf(stderr, "Mismatches width sum\n");
+                    writeln_debug(stderr);
                     abort();
                 }
 

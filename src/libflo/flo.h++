@@ -259,8 +259,9 @@ namespace libflo {
                         for (auto it = op->operands(); !it.done(); ++it) {
                             auto node = *it;
                             if (!node->known_width()) {
-                                fprintf(stderr, "Unable to infer '%s'\n",
+                                fprintf(stderr, "Unable to infer '%s' in ",
                                         node->name().c_str());
+                                op->writeln(stderr);
                                 remaining_unknows++;
                             }
                         }
