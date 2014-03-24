@@ -67,3 +67,13 @@ void node::update_cycle(const unknown<size_t>& cycle)
     if (cycle.known())
         _cycle = cycle;
 }
+
+int node::const_int(void) const
+{
+    if (!is_const()) {
+        fprintf(stderr, "const_int taken for non-constant\n");
+        abort();
+    }
+
+    return atoi(name().c_str());
+}

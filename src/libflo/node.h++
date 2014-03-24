@@ -78,6 +78,9 @@ namespace libflo {
         /* Updates a node with a new cycle, failing on mismatch. */
         void update_cycle(const unknown<size_t>& cycle);
 
+        /* Returns the value of this constant, parsed as an integer. */
+        int const_int(void) const;
+
     public:
         /* Parses a node to determine exactly what sort of node it
          * is.  You probably don't want to bother with this unless
