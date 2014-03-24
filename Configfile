@@ -38,3 +38,4 @@ TESTSRC     += iomux.bash
 TESTSRC     += counter-32-known.bash
 TESTSRC     += counter-250-mwe.bash
 TESTSRC     += mem.bash
+TESTSRC     += des.bash

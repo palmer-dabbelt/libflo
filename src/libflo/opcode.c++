@@ -57,6 +57,8 @@ enum opcode libflo::string_to_opcode(const std::string op)
         return opcode::ADD;
     } else if (str_starts(op, "rst")) {
         return opcode::RST;
+    } else if (str_starts(op, "init")) {
+        return opcode::INIT;
     } else if (str_starts(op, "in")) {
         return opcode::IN;
     } else if (str_starts(op, "lit")) {
@@ -123,6 +125,7 @@ const std::string&& libflo::opcode_to_string(enum opcode op)
     case opcode::ADD:  return std::move(std::string("add"));
     case opcode::RST:  return std::move(std::string("rst"));
     case opcode::IN:   return std::move(std::string("in"));
+    case opcode::INIT: return std::move(std::string("init"));
     case opcode::LIT:  return std::move(std::string("lit"));
     case opcode::CAT:  return std::move(std::string("cat"));
     case opcode::CATD: return std::move(std::string("catd"));

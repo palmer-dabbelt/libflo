@@ -83,6 +83,7 @@ namespace libflo {
                 case opcode::EQ:
                 case opcode::GTE:
                 case opcode::IN:
+                case opcode::INIT:
                 case opcode::LD:
                 case opcode::LIT:
                 case opcode::LOG2:
@@ -232,6 +233,7 @@ namespace libflo {
                     must_sum(0, std::vector<size_t>({1, 2}));
                     if (o(2)->known_width())
                         _width = o(2)->width();
+
                     break;
 
                     /* Memory operations are pretty much all special
@@ -262,20 +264,38 @@ namespace libflo {
                      * mask/extened that happens.  Note that we _do_
                      * know the output width, so I think it's somewhat
                      * fair... */
-                case opcode::ARSH:
                 case opcode::LOG2:
+                    break;
+
+                case opcode::ARSH:
+                case opcode::RSH:
+                    if (o(2)->is_const() && o(2)->const_int() == 0) {
+
+                    }
                 case opcode::LSH:
                 case opcode::MSK:
-                case opcode::RSH:
                     /* FIXME: This is probably incorrect: here I just
                      * attempt to infer the width of the constant
                      * that's attached to a shift operation.  The
                      * general idea is that this allows me to have
                      * every constant's width inferred.  I don't
                      * really think this is correct, though...*/
-                    if (o(2)->is_const()) {
+                    if (o(1)->is_const() || o(2)->is_const()) {
                         must_match(std::vector<size_t>({1, 2}));
                     }
+                    break;
+
+                    /* Essentially here we just enforce that the
+                     * widths of the constants inside an init node
+                     * match the memory's width.  Note that this isn't
+                     * technically correct (as the address width is
+                     * not the same as the data width, it's
+                     * "log2(depth)"), but it's good enough for now...
+                     * Note that nobody should notice because
+                     * constants are almost always passed raw and only
+                     * constans can be in init nodes. */
+                case opcode::INIT:
+                    must_match(std::vector<size_t>({1, 2, 3}));
                     break;
 
                     /* These operations just don't do anything, so it
@@ -308,6 +328,7 @@ namespace libflo {
                      * have issued, they've just got a different
                      * number of sources. */
                 case opcode::LIT:
+                case opcode::LOG2:
                 case opcode::NEG:
                 case opcode::MOV:
                 case opcode::NOT:
@@ -328,7 +349,6 @@ namespace libflo {
                 case opcode::CAT:
                 case opcode::CATD:
                 case opcode::ARSH:
-                case opcode::LOG2:
                 case opcode::LSH:
                 case opcode::MSK:
                 case opcode::RSH:
@@ -364,6 +384,7 @@ namespace libflo {
                 case opcode::EAT:
                 case opcode::MEM:
                 case opcode::NOP:
+                case opcode::INIT:
                     break;
                 }
             }
@@ -371,8 +392,10 @@ namespace libflo {
         /* Writes this operation out to standard out as a string. */
         void writeln(FILE *f) const
             {
-                fprintf(f, "%s = %s",
-                        _d->name().c_str(),
+                if (_op != opcode::INIT)
+                    fprintf(f, "%s = ", _d->name().c_str());
+
+                fprintf(f, "%s",
                         opcode_to_string(_op).c_str());
 
                 if (_width.known())
@@ -660,6 +683,7 @@ namespace libflo {
                 case opcode::EQ:
                 case opcode::GTE:
                 case opcode::IN:
+                case opcode::INIT:
                 case opcode::LD:
                 case opcode::LIT:
                 case opcode::LOG2:

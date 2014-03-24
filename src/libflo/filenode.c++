@@ -45,6 +45,8 @@ filenode::filenode(const std::string d, const std::string op_width)
 
 filenode filenode::parse(const std::string line)
 {
+    static unsigned long index = 0;
+
     /* Here we just use sscanf to parse the line because the format is
      * pretty fixed. */
     char d[LINE_MAX], s0[LINE_MAX], s1[LINE_MAX], s2[LINE_MAX], s3[LINE_MAX];
@@ -63,6 +65,13 @@ filenode filenode::parse(const std::string line)
         return filenode(d, op, std::vector<std::string>({s0}));
     case 2:
         return filenode(d, op);
+    }
+
+    scanned = sscanf(line.c_str(), "init %s %s %s\n", s0, s1, s2);
+    if (scanned == 3) {
+        snprintf(d, LINE_MAX, "LFinit%lu", index);
+        index++;
+        return filenode(d, "init", std::vector<std::string>({s0, s1, s2}));
     }
 
     fprintf(stderr, "Unable to parse '%s' as a flo node\n",

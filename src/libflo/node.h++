@@ -181,6 +181,11 @@ namespace libflo {
                     break;
                 }
 
+                case opcode::INIT:
+                    return reg<node_t>(d,
+                                       unknown<size_t>(1),
+                                       unknown<size_t>(0));
+
                 /* These operations don't actually produce a node. */
                 case opcode::EAT:
                 case opcode::NOP:

@@ -37,6 +37,7 @@ namespace libflo {
         EQ,
         GTE,
         IN,
+        INIT,
         LD,
         LIT,
         LOG2,
