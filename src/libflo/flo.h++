@@ -143,6 +143,7 @@ namespace libflo {
                 }
 
                 _ops.push_back(o);
+                o->try_infer_width();
             }
 
         /* These are just like the single-value version, but they add
