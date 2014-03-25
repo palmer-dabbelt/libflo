@@ -44,7 +44,9 @@ void node::update_width(const unknown<size_t>& width)
      * in the process. */
     if (_width.known() && width.known()) {
         if (_width.value() != width.value()) {
-            fprintf(stderr, "Re-inferring node width\n");
+            fprintf(stderr, "Re-inferring node width: '%s'\n", name().c_str());
+            fprintf(stderr, "  Old width: %lu\n", _width.value());
+            fprintf(stderr, "  New width: %lu\n", width.value());
             abort();
         }
     }
