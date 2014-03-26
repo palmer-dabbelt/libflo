@@ -122,6 +122,13 @@ namespace libflo {
                         abort();
                     }
                 }
+
+                /* Zero-width operations aren't valid. */
+                if (_width.known() && (_width.value() == 0)) {
+                    fprintf(stderr, "Created 0-width operation: ");
+                    writeln_debug(stderr);
+                    abort();
+                }
             }
 
     public:
