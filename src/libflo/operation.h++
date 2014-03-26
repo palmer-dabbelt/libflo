@@ -111,6 +111,16 @@ namespace libflo {
                 case opcode::XOR:
                     break;
                 }
+
+                /* Here's a sanity check: ensure that the sources
+                 * aren't the same as the destination. */
+                for (const auto& s : _s) {
+                    if (strcmp(s->name().c_str(), _d->name().c_str()) == 0) {
+                        fprintf(stderr, "Trivial dest <= source loop: ");
+                        writeln_debug(stderr);
+                        abort();
+                    }
+                }
             }
 
     public:
