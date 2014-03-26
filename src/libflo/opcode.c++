@@ -67,6 +67,8 @@ enum opcode libflo::string_to_opcode(const std::string op)
         return opcode::CATD;
     } else if (str_starts(op, "cat")) {
         return opcode::CAT;
+    } else if (str_starts(op, "rshd")) {
+        return opcode::RSHD;
     } else if (str_starts(op, "rsh")) {
         return opcode::RSH;
     } else if (str_starts(op, "msk")) {
@@ -130,6 +132,7 @@ const std::string&& libflo::opcode_to_string(enum opcode op)
     case opcode::CAT:  return std::move(std::string("cat"));
     case opcode::CATD: return std::move(std::string("catd"));
     case opcode::RSH:  return std::move(std::string("rsh"));
+    case opcode::RSHD: return std::move(std::string("rshd"));
     case opcode::MSK:  return std::move(std::string("msk"));
     case opcode::LD:   return std::move(std::string("ld"));
     case opcode::NEQ:  return std::move(std::string("neq"));

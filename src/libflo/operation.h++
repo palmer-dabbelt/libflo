@@ -104,6 +104,7 @@ namespace libflo {
                 case opcode::REG:
                 case opcode::RND:
                 case opcode::RSH:
+                case opcode::RSHD:
                 case opcode::RST:
                 case opcode::ST:
                 case opcode::SUB:
@@ -279,6 +280,7 @@ namespace libflo {
 
                 case opcode::ARSH:
                 case opcode::RSH:
+                case opcode::RSHD:
                     if (o(2)->is_const() && o(2)->const_int() == 0) {
 
                     }
@@ -362,6 +364,7 @@ namespace libflo {
                 case opcode::LSH:
                 case opcode::MSK:
                 case opcode::RSH:
+                case opcode::RSHD:
                     after(std::vector<size_t>({1, 2}));
                     break;
 
@@ -712,6 +715,7 @@ namespace libflo {
                 case opcode::REG:
                 case opcode::RND:
                 case opcode::RSH:
+                case opcode::RSHD:
                 case opcode::RST:
                 case opcode::ST:
                 case opcode::SUB:

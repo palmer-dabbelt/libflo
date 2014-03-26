@@ -58,6 +58,7 @@ namespace libflo {
         REG,
         RND,
         RSH,
+        RSHD,
         RST,
         ST,
         SUB,

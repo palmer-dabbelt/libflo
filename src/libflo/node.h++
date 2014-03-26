@@ -141,6 +141,7 @@ namespace libflo {
                 case opcode::RD:
                 case opcode::RND:
                 case opcode::RSH:
+                case opcode::RSHD:
                 case opcode::ST:
                 case opcode::SUB:
                 case opcode::WR:
