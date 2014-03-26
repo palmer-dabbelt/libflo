@@ -278,6 +278,7 @@ namespace libflo {
                 /* Make an attempt to schedule this computation in
                  * dataflow order to something can actually be
                  * computed using this program. */
+                old_remaining_unknowns = 0;
                 for (size_t i = 0; i < nodes.size(); ++i) {
                     for (auto it = ops.begin(); it != ops.end(); ++it) {
                         auto op = *it;
@@ -296,6 +297,10 @@ namespace libflo {
                     }
                     if (remaining_unknowns == 0)
                         break;
+
+                    if (remaining_unknowns == old_remaining_unknowns)
+                        break;
+                    old_remaining_unknowns = remaining_unknowns;
                 }
 
                 /* If we've made it this far then hopefully we've
