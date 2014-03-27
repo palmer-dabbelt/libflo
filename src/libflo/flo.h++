@@ -170,7 +170,7 @@ namespace libflo {
         parse_help(const std::string filename)
             {
                 /* Reads a file line by line, saving it into memory. */
-                std::vector<filenode> lines;
+                std::vector<std::shared_ptr<filenode>> lines;
                 {
                     FILE *f = fopen(filename.c_str(), "r");
                     if (f == NULL) {
@@ -191,10 +191,10 @@ namespace libflo {
                 std::map<std::string, node_ptr> nodes;
                 for (auto it = lines.begin(); it != lines.end(); ++it) {
                     auto line = *it;
-                    auto node = node::parse<node_t>(line.d,
-                                                    line.opcode,
-                                                    line.width,
-                                                    line.s);
+                    auto node = node::parse<node_t>(line->d,
+                                                    line->opcode,
+                                                    line->width,
+                                                    line->s);
                     if (node != NULL) {
                         nodes[node->name()] = node;
                     }
@@ -209,10 +209,10 @@ namespace libflo {
                     auto line = *it;
                     auto op = operation_t::template parse<operation_t>(
                         nodes,
-                        line.d,
-                        line.opcode,
-                        line.width,
-                        line.s
+                        line->d,
+                        line->opcode,
+                        line->width,
+                        line->s
                         );
                     if (op != NULL)
                         ops.push_back(op);

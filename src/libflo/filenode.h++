@@ -24,6 +24,7 @@
 
 #include "opcode.h++"
 #include "unknown.h++"
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -45,7 +46,7 @@ namespace libflo {
         filenode(const std::string d, const std::string op_width);
 
     public:
-        static filenode parse(const std::string line);
+        static std::shared_ptr<filenode> parse(const std::string line);
     };
 }
 

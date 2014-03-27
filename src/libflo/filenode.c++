@@ -43,7 +43,7 @@ filenode::filenode(const std::string d, const std::string op_width)
 {
 }
 
-filenode filenode::parse(const std::string line)
+std::shared_ptr<filenode> filenode::parse(const std::string line)
 {
     static unsigned long index = 0;
 
@@ -56,22 +56,39 @@ filenode filenode::parse(const std::string line)
 
     switch (scanned) {
     case 6:
-        return filenode(d, op, std::vector<std::string>({s0, s1, s2, s3}));
+        return std::shared_ptr<filenode>(new filenode(d,
+                                                      op,
+                                                      {s0, s1, s2, s3}
+                                             ));
     case 5:
-        return filenode(d, op, std::vector<std::string>({s0, s1, s2}));
+        return std::shared_ptr<filenode>(new filenode(d,
+                                                      op,
+                                                      {s0, s1, s2}
+                                             ));
     case 4:
-        return filenode(d, op, std::vector<std::string>({s0, s1}));
+        return std::shared_ptr<filenode>(new filenode(d,
+                                                      op,
+                                                      {s0, s1}
+                                             ));
     case 3:
-        return filenode(d, op, std::vector<std::string>({s0}));
+        return std::shared_ptr<filenode>(new filenode(d,
+                                                      op,
+                                                      {s0}
+                                             ));
     case 2:
-        return filenode(d, op);
+        return std::shared_ptr<filenode>(new filenode(d,
+                                                      op
+                                             ));
     }
 
     scanned = sscanf(line.c_str(), "init %s %s %s\n", s0, s1, s2);
     if (scanned == 3) {
         snprintf(d, LINE_MAX, "LFinit%lu", index);
         index++;
-        return filenode(d, "init", std::vector<std::string>({s0, s1, s2}));
+        return std::shared_ptr<filenode>(new filenode(d,
+                                                      "init",
+                                                      {s0, s1, s2}
+                                             ));
     }
 
     fprintf(stderr, "Unable to parse '%s' as a flo node\n",
