@@ -1,3 +1,5 @@
+export LC_ALL="C"
+
 $PTEST_BINARY test.in > test.out
 
 cat test.out | sort > test.out.sort
