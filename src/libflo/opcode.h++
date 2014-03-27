@@ -68,7 +68,7 @@ namespace libflo {
 
     /* Converts an opcode to a string, or parses a string into an
      * opcode. */
-    const std::string&& opcode_to_string(enum opcode opcode);
+    const std::string opcode_to_string(enum opcode opcode);
     enum opcode string_to_opcode(const std::string string);
 
     /* Obtains the width that may or may not be attached to an

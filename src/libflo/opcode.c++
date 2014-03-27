@@ -111,7 +111,7 @@ enum opcode libflo::string_to_opcode(const std::string op)
     }
 }
 
-const std::string&& libflo::opcode_to_string(enum opcode op)
+const std::string libflo::opcode_to_string(enum opcode op)
 {
     switch (op) {
     case opcode::EAT:  return std::move(std::string("eat"));
