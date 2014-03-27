@@ -20,6 +20,7 @@
  */
 
 #include "node.h++"
+#include "sizet_printf.h++"
 #include <string>
 using namespace libflo;
 
@@ -45,8 +46,8 @@ void node::update_width(const unknown<size_t>& width)
     if (_width.known() && width.known()) {
         if (_width.value() != width.value()) {
             fprintf(stderr, "Re-inferring node width: '%s'\n", name().c_str());
-            fprintf(stderr, "  Old width: %lu\n", _width.value());
-            fprintf(stderr, "  New width: %lu\n", width.value());
+            fprintf(stderr, "  Old width: " SIZET_FORMAT "\n", _width.value());
+            fprintf(stderr, "  New width: " SIZET_FORMAT "\n", width.value());
             abort();
         }
     }
