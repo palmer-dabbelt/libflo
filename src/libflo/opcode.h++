@@ -63,7 +63,7 @@ namespace libflo {
         ST,
         SUB,
         WR,
-        XOR,
+        XOR
     };
 
     /* Converts an opcode to a string, or parses a string into an
