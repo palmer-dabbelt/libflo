@@ -269,7 +269,8 @@ namespace libflo {
                     }
 
                     if (remaining_unknows > 0) {
-                        fprintf(stderr, "Aborting with %lu widths remaining\n",
+                        fprintf(stderr, "Aborting with "
+                                SIZET_FORMAT "widths remaining\n",
                                 remaining_unknows);
                         abort();
                     }
@@ -323,7 +324,8 @@ namespace libflo {
                             op->writeln_debug(stderr);
                         }
 
-                        fprintf(stderr, "Aborting with %lu nodes remaining\n",
+                        fprintf(stderr, "Aborting with "
+                                SIZET_FORMAT "nodes remaining\n",
                                 remaining_unknows);
                         abort();
                     }

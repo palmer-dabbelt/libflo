@@ -22,6 +22,7 @@
 #ifndef LIBFLO__OPERATION_HXX
 #define LIBFLO__OPERATION_HXX
 
+#include "sizet_printf.h++"
 #include "unknown.h++"
 #include <map>
 #include <memory>
@@ -419,7 +420,7 @@ namespace libflo {
                         opcode_to_string(_op).c_str());
 
                 if (_width.known())
-                    fprintf(f, "/%lu", _width.value());
+                    fprintf(f, "/" SIZET_FORMAT, _width.value());
                 
                 for (auto it = _s.begin(); it != _s.end(); ++it)
                     fprintf(f, " %s", (*it)->name().c_str());
@@ -435,19 +436,19 @@ namespace libflo {
                 fprintf(f, "%s",
                         _d->name().c_str());
                 if (_d->known_width())
-                    fprintf(f, "/%lu", _d->width());
+                    fprintf(f, "/" SIZET_FORMAT, _d->width());
 
                 fprintf(f, " = %s",
                         opcode_to_string(_op).c_str());
                 if (_width.known())
-                    fprintf(f, "/%lu", _width.value());
+                    fprintf(f, "/" SIZET_FORMAT, _width.value());
 
                 for (auto it = _s.begin(); it != _s.end(); ++it) {
                     fprintf(f, " %s", (*it)->name().c_str());
                     if ((*it)->known_cycle())
-                        fprintf(f, "@%lu", (*it)->cycle());
+                        fprintf(f, "@" SIZET_FORMAT, (*it)->cycle());
                     if ((*it)->known_width())
-                        fprintf(f, "/%lu", (*it)->width());
+                        fprintf(f, "/" SIZET_FORMAT, (*it)->width());
                 }
 
                 fprintf(f, "\n");
@@ -459,7 +460,7 @@ namespace libflo {
             {
                 char opstr[LINE_MAX];
                 if (_width.known()) {
-                    snprintf(opstr, LINE_MAX, "%s/%lu",
+                    snprintf(opstr, LINE_MAX, "%s/" SIZET_FORMAT,
                              opcode_to_string(_op).c_str(),
                              _width.value()
                         );
@@ -539,10 +540,10 @@ namespace libflo {
                         if (known != NULL) {
                             if (known->width() != node->width()) {
                                 fprintf(stderr, "Mismatched widths\n");
-                                fprintf(stderr, "  %s: %lu\n",
+                                fprintf(stderr, "  %s: " SIZET_FORMAT "\n",
                                         known->name().c_str(),
                                         known->width());
-                                fprintf(stderr, "  %s: %lu\n",
+                                fprintf(stderr, "  %s: " SIZET_FORMAT "\n",
                                         node->name().c_str(),
                                         node->width());
                                 writeln_debug(stderr);

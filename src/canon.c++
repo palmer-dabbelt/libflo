@@ -23,6 +23,7 @@
 #include <libflo/node.h++>
 #include <libflo/operation.h++>
 #include <libflo/version.h++>
+#include <libflo/sizet_printf.h++>
 #include <string.h>
 #include "version.h"
 using namespace libflo;
@@ -53,7 +54,7 @@ int main(int argc, const char **argv)
         if (!node->is_mem())
             continue;
 
-        fprintf(stdout, "%s = mem/%lu %lu\n",
+        fprintf(stdout, "%s = mem/" SIZET_FORMAT " " SIZET_FORMAT "\n",
                 node->name().c_str(),
                 node->width(),
                 node->depth()
