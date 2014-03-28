@@ -18,6 +18,7 @@ GENERATE    += version-pc.sed
 LIBRARIES   += libflo.so
 SOURCES     += libflo/node.c++
 SOURCES     += libflo/filenode.c++
+SOURCES     += libflo/version.c++
 
 CONFIG      += find_library_headers
 
