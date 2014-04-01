@@ -95,7 +95,7 @@ namespace libflo {
         static std::string str2name(const std::string n);
         static unknown<size_t> str2width(const std::string,
                                          const unknown<size_t>& w);
-
+        static unknown<size_t> str2width(const std::string);
 
         /* Looks up a node in a node map, potientally mangling its
          * name.  If the node can be built as a constant then then
@@ -123,7 +123,7 @@ namespace libflo {
                     }
                 }
 
-                return node::constant<node_t>(buffer);
+                return node::constant<node_t>(str);
             }
 
         /* Parses a node to determine exactly what sort of node it
@@ -246,8 +246,8 @@ namespace libflo {
         template<class node_t>
         static std::shared_ptr<node_t> constant(const std::string name)
             {
-                return std::shared_ptr<node_t>(new node_t(name,
-                                                          unknown<size_t>(),
+                return std::shared_ptr<node_t>(new node_t(str2name(name),
+                                                          str2width(name),
                                                           unknown<size_t>(0),
                                                           false,
                                                           true,

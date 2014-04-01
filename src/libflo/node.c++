@@ -121,3 +121,8 @@ unknown<size_t> node::str2width(const std::string n, const unknown<size_t>& w)
 
     return nw;
 }
+
+unknown<size_t> node::str2width(const std::string n)
+{
+    return str2width(n, unknown<size_t>());
+}
