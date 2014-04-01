@@ -270,7 +270,7 @@ namespace libflo {
 
                     if (remaining_unknows > 0) {
                         fprintf(stderr, "Aborting with "
-                                SIZET_FORMAT "widths remaining\n",
+                                SIZET_FORMAT " widths remaining\n",
                                 remaining_unknows);
                         abort();
                     }
@@ -325,7 +325,7 @@ namespace libflo {
                         }
 
                         fprintf(stderr, "Aborting with "
-                                SIZET_FORMAT "nodes remaining\n",
+                                SIZET_FORMAT " nodes remaining\n",
                                 remaining_unknows);
                         abort();
                     }
