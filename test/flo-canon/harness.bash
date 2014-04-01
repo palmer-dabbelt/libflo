@@ -4,6 +4,24 @@ if [[ "$TEST" == "" ]]
 then
     TEST="test"
 fi
+
+#############################################################################
+# Check if we need to generate a Flo file                                   #
+#############################################################################
+if test -f $TEST.scala
+then
+    cat $TEST.scala
+
+    scalac $TEST.scala -classpath chisel.jar:.
+
+    scala $SCALA_FLAGS -classpath chisel.jar:. $TEST \
+        --debug --backend flo \
+        || true
+
+    cat $TEST.flo
+    mv $TEST.flo $TEST.in
+fi
+
 #############################################################################
 # Run the test without valgrind                                             #
 #############################################################################
