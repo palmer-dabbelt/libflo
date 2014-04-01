@@ -107,9 +107,9 @@ unknown<size_t> node::str2width(const std::string n, const unknown<size_t>& w)
     char *width = strstr(buffer, "/");
     if (width == NULL)
         width = strstr(buffer, "'");
-
     if (width == NULL)
         return w;
+    width++;
 
     unknown<size_t> nw(atoll(width));
 
