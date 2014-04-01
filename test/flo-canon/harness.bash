@@ -1,17 +1,21 @@
 export LC_ALL="C"
 
+if [[ "$TEST" == "" ]]
+then
+    TEST="test"
+fi
 #############################################################################
 # Run the test without valgrind                                             #
 #############################################################################
-$PTEST_BINARY test.in > test.out
+$PTEST_BINARY $TEST.in > $TEST.out
 
-cat test.out | sort > test.out.sort
-cat test.gold | sort > test.gold.sort
+cat $TEST.out | sort > $TEST.out.sort
+cat $TEST.gold | sort > $TEST.gold.sort
 
-cat test.out
-cat test.gold
+cat $TEST.out
+cat $TEST.gold
 
-diff -au test.gold.sort test.out.sort
+diff -au $TEST.gold.sort $TEST.out.sort
 out="$?"
 if [[ "$out" != "0" ]]
 then
@@ -31,21 +35,21 @@ then
     exit 0
 fi
 
-valgrind -q $PTEST_BINARY test.in >test.out 2>test.valgrind
-cat test.valgrind
+valgrind -q $PTEST_BINARY $TEST.in >$TEST.out 2>$TEST.valgrind
+cat $TEST.valgrind
 
-if [[ "$(cat test.valgrind | wc -l)" != 0 ]]
+if [[ "$(cat $TEST.valgrind | wc -l)" != 0 ]]
 then
     exit 1
 fi
 
-cat test.out | sort > test.out.sort
-cat test.gold | sort > test.gold.sort
+cat $TEST.out | sort > $TEST.out.sort
+cat $TEST.gold | sort > $TEST.gold.sort
 
 cat test.out
 cat test.gold
 
-diff -au test.gold.sort test.out.sort
+diff -au $TEST.gold.sort $TEST.out.sort
 out="$?"
 if [[ "$out" != "0" ]]
 then
