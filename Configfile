@@ -28,15 +28,18 @@ SOURCES     += libflo/flo.pc
 BINARIES    += flo-canon
 DEPLIBS     += flo
 SOURCES     += canon.c++
-TESTSRC     += counter-5.bash
-TESTSRC     += counter-16.bash
-TESTSRC     += counter-32.bash
-TESTSRC     += mod-counter.bash
-TESTSRC     += fib.bash
-TESTSRC     += gcd.bash
-TESTSRC     += adder4.bash
-TESTSRC     += iomux.bash
-TESTSRC     += counter-32-known.bash
-TESTSRC     += counter-250-mwe.bash
-TESTSRC     += mem.bash
-TESTSRC     += des.bash
+
+# These are some legacy tests that were hand-written.  They use the
+# old file format that used "/" to deliminate widths.
+TESTSRC     += raw-slash_counter-5.bash
+TESTSRC     += raw-slash_counter-16.bash
+TESTSRC     += raw-slash_counter-32.bash
+TESTSRC     += raw-slash_mod-counter.bash
+TESTSRC     += raw-slash_fib.bash
+TESTSRC     += raw-slash_gcd.bash
+TESTSRC     += raw-slash_adder4.bash
+TESTSRC     += raw-slash_iomux.bash
+TESTSRC     += raw-slash_counter-32-known.bash
+TESTSRC     += raw-slash_counter-250-mwe.bash
+TESTSRC     += raw-slash_mem.bash
+TESTSRC     += raw-slash_des.bash
