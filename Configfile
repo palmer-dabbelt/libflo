@@ -42,7 +42,6 @@ TESTSRC     += raw-slash_iomux.bash
 TESTSRC     += raw-slash_counter-32-known.bash
 TESTSRC     += raw-slash_counter-250-mwe.bash
 TESTSRC     += raw-slash_mem.bash
-TESTSRC     += raw-slash_des.bash
 
 # These tests run against a (cached) version of Chisel
 TESTSRC     += chisel_counter-128.bash

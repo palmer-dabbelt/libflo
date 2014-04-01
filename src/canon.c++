@@ -54,7 +54,7 @@ int main(int argc, const char **argv)
         if (!node->is_mem())
             continue;
 
-        fprintf(stdout, "%s = mem/" SIZET_FORMAT " " SIZET_FORMAT "\n",
+        fprintf(stdout, "%s = mem'" SIZET_FORMAT " " SIZET_FORMAT "\n",
                 node->name().c_str(),
                 node->width(),
                 node->depth()
