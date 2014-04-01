@@ -286,23 +286,34 @@ namespace libflo {
                 case opcode::LOG2:
                     break;
 
+                    /* LSH's width is defined to never drop any bits
+                     * off the end.  Unfortunately this is a pretty
+                     * wacky special case, as there appears to be a
+                     * whole bunch of width inference rules that
+                     * Chisel attempts to use... */
+                case opcode::LSH:
+                {
+                    if (s()->known_width() && t()->is_const()) {
+                        /* If the shift amount is a constant then we
+                         * know exactly how much to shift.*/
+                        _width = s()->width() + t()->const_int();
+                    }
+                    else if (s()->known_width() && t()->known_width()) {
+                        /* If we just know the width of both sides
+                         * then generate a pessimsticly-large shift. */
+                        _width = s()->width() + (1 << t()->width()) - 1;
+                    }
+
+                    if (_width.known())
+                        must_be(0, _width.value());
+
+                    break;
+                }
+
                 case opcode::ARSH:
                 case opcode::RSH:
                 case opcode::RSHD:
-                    if (o(2)->is_const() && o(2)->const_int() == 0) {
-
-                    }
-                case opcode::LSH:
                 case opcode::MSK:
-                    /* FIXME: This is probably incorrect: here I just
-                     * attempt to infer the width of the constant
-                     * that's attached to a shift operation.  The
-                     * general idea is that this allows me to have
-                     * every constant's width inferred.  I don't
-                     * really think this is correct, though...*/
-                    if (o(1)->is_const() || o(2)->is_const()) {
-                        must_match(std::vector<size_t>({1, 2}));
-                    }
                     break;
 
                     /* Essentially here we just enforce that the
