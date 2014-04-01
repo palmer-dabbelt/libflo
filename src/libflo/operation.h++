@@ -25,6 +25,7 @@
 #include "sizet_printf.h++"
 #include "unknown.h++"
 #include <map>
+#include <math.h>
 #include <memory>
 #include <string.h>
 #include <vector>
@@ -313,6 +314,23 @@ namespace libflo {
                 case opcode::ARSH:
                 case opcode::RSH:
                 case opcode::RSHD:
+                {
+                    /* Here a special hack for RSH: essentially the
+                     * idea is that if the offset is a constant then
+                     * it doesn't really matter what the width is (as
+                     * long as it can fit the value without
+                     * truncation) because nothing else is going to
+                     * see it. */
+                    if (t()->is_const() && !t()->known_width()) {
+                        if (t()->const_int() == 0)
+                            t()->update_width(1);
+                        else
+                            t()->update_width(ceil(log2(t()->const_int())) + 1);
+                    }
+
+                    break;
+                }
+
                 case opcode::MSK:
                     break;
 
