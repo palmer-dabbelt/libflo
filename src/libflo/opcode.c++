@@ -163,6 +163,8 @@ const unknown<size_t> libflo::opstring_to_width(const std::string string)
 
     char *num = strstr(buffer, "/");
     if (num == NULL)
+        num = strstr(buffer, "'");
+    if (num == NULL)
         return unknown<size_t>();
     num++;
 

@@ -24,9 +24,15 @@
 
 #include "opcode.h++"
 #include "unknown.h++"
+#include <map>
 #include <memory>
 #include <string>
+#include <string.h>
 #include <vector>
+
+#ifndef LINE_MAX
+#define LINE_MAX 1024
+#endif
 
 namespace libflo {
     /* Everything in the dataflow machine that can have a value is
@@ -82,6 +88,44 @@ namespace libflo {
         int const_int(void) const;
 
     public:
+        /* Parses an input string, which contains the combined
+         * name+width (an optional width) for a node.  str2name
+         * returns the node's name, while str2width returns the width
+         * (or unknown). */
+        static std::string str2name(const std::string n);
+        static unknown<size_t> str2width(const std::string,
+                                         const unknown<size_t>& w);
+
+
+        /* Looks up a node in a node map, potientally mangling its
+         * name.  If the node can be built as a constant then then
+         * constant will be returned, otherwise NULL will be. */
+        template <class node_t>
+        static std::shared_ptr<node_t>
+        lookup(const std::map<std::string, std::shared_ptr<node_t> >& map,
+               const std::string str)
+            {
+                auto l = map.find(str);
+                if (l != map.end())
+                    return l->second;
+
+                /* If there was no node with this name then we
+                 * must have ended up with a constant --
+                 * verify that and add one to the list. */
+                char buffer[LINE_MAX];
+                snprintf(buffer, LINE_MAX, "%s", str2name(str).c_str());
+                for (size_t i = 0; i < strlen(buffer); ++i) {
+                    if (i == 0 && buffer[i] == '-')
+                        continue;
+
+                    if (!isdigit(buffer[i])) {
+                        return NULL;
+                    }
+                }
+
+                return node::constant<node_t>(buffer);
+            }
+
         /* Parses a node to determine exactly what sort of node it
          * is.  You probably don't want to bother with this unless
          * you're inside the parser... */

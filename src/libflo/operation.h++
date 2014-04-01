@@ -664,30 +664,13 @@ namespace libflo {
                 for (auto it = s.begin(); it != s.end(); ++it) {
                     /* Try and find this source in the list of nodes
                      * that we know about. */
-                    auto sl = n.find(*it);
-                    if (sl == n.end()) {
-                        /* If there was no node with this name then we
-                         * must have ended up with a constant --
-                         * verify that and add one to the list. */
-                        char buffer[LINE_MAX];
-                        snprintf(buffer, LINE_MAX, "%s", (*it).c_str());
-                        for (size_t i = 0; i < strlen(buffer); ++i) {
-                            if (i == 0 && buffer[i] == '-')
-                                continue;
-                            if (!isdigit(buffer[i])) {
-                                fprintf(stderr,
-                                        "Found non-numeric constant: '%s'\n",
-                                        buffer);
-                                abort();
-                            }
-                        }
-
-                        sp.push_back(node::constant<node_t>(buffer));
-                    } else {
-                        /* The lookup didn't fail, so just directly
-                         * add that node to the list of sources. */
-                        sp.push_back(sl->second);
+                    auto s = node::lookup(n, *it);
+                    if (s == NULL) {
+                        fprintf(stderr, "Unable to parse node: '%s'\n",
+                                (*it).c_str());
+                        abort();
                     }
+                    sp.push_back(s);
                 }
 
                 /* Now that we've got pointer to all the nodes we're
