@@ -611,7 +611,7 @@ namespace libflo {
                 /* Find the one unknown width on the RHS and update that. */
                 for (auto it = i.begin(); it != i.end(); ++it)
                     if (this->o(*it)->known_width() == false)
-                        this->o(*it)->update_width(unknown<size_t>(o_sum - i_sum));
+                        this->o(*it)->update_width(o_sum - i_sum);
             }
 
         void must_be(size_t o, size_t w)
