@@ -40,6 +40,17 @@ then
     exit "$out"
 fi
 
+# Run a second test, ensuring that libflo can parse its own output
+$PTEST_BINARY $TEST.out > $TEST.out.out
+cat $TEST.out.out | sort > $TEST.out.out.sort
+
+diff -au $TEST.out.sort $TEST.out.out.sort
+out="$?"
+if [[ "$out" != "0" ]]
+then
+    exit "$out"
+fi
+
 #############################################################################
 # Run the test with valgrind                                                #
 #############################################################################
@@ -68,6 +79,24 @@ cat test.out
 cat test.gold
 
 diff -au $TEST.gold.sort $TEST.out.sort
+out="$?"
+if [[ "$out" != "0" ]]
+then
+    exit "$out"
+fi
+
+# Run a second test, ensuring that libflo can parse its own output
+valgrind -q $PTEST_BINARY $TEST.out >$TEST.out.out 2>$TEST.out.valgrind
+cat $TEST.out.valgrind
+
+if [[ "$(cat $TEST.out.valgrind | wc -l)" != 0 ]]
+then
+    exit 1
+fi
+
+cat $TEST.out.out | sort > $TEST.out.out.sort
+
+diff -au $TEST.out.sort $TEST.out.out.sort
 out="$?"
 if [[ "$out" != "0" ]]
 then
