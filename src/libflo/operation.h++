@@ -240,7 +240,6 @@ namespace libflo {
                      * the input width.  We've encoded this with a bit
                      * of a trick... */
                 case opcode::MUL:
-                    must_match(std::vector<size_t>({1, 2}));
                     must_sum(0, std::vector<size_t>({1, 2}));
                     if (o(0)->known_width())
                         _width = o(0)->width();
