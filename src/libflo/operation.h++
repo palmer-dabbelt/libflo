@@ -259,7 +259,7 @@ namespace libflo {
                      * cases. */
                 case opcode::RD:
                     /* As far as I can tell, the RD instruction looks
-                     * like the following: "VALUE = rd/WIDTH MEMORY
+                     * like the following: "VALUE = rd/WIDTH 1 MEMORY
                      * ADDRESS". */
                     must_be(1, 1);
                     break;
@@ -447,7 +447,7 @@ namespace libflo {
                 fprintf(f, "%s",
                         opcode_to_string(_op).c_str());
 
-                if (_width.known())
+                if (_width.known() && _op != opcode::INIT)
                     fprintf(f, "'" SIZET_FORMAT, _width.value());
                 
                 for (auto it = _s.begin(); it != _s.end(); ++it) {
