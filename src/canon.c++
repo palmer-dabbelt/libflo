@@ -48,9 +48,7 @@ int main(int argc, const char **argv)
 
     auto flof = flo<node, operation<node> >::parse(argv[1]);
 
-    for (auto it = flof->nodes(); !it.done(); ++it) {
-        auto node = *it;
-
+    for (const auto& node : flof->nodes()) {
         if (!node->is_mem())
             continue;
 
@@ -61,9 +59,7 @@ int main(int argc, const char **argv)
             );
     }
 
-    for (auto it = flof->operations(); !it.done(); ++it) {
-        auto op = *it;
-
+    for (const auto& op : flof->operations()) {
         for (auto it = op->operands(); !it.done(); ++it) {
             if (!(*it)->known_width()) {
                 fprintf(stderr, "Unknown width of node '%s' in '%s'\n",

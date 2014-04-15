@@ -44,54 +44,9 @@ namespace libflo {
         typedef std::shared_ptr<operation_t> operation_ptr;
         typedef std::shared_ptr<node_t> node_ptr;
 
-    public:
-        class op_iter {
-        private:
-            const typename std::vector<operation_ptr> _ops;
-            typename std::vector<operation_ptr>::const_iterator _it;
-        public:
-            op_iter(const std::vector<operation_ptr>& ops)
-                : _ops(ops),
-                  _it(_ops.begin())
-                {
-                }
-            operation_ptr operator*(void) const { return *_it; }
-            bool done(void) const { return _it == _ops.end(); }
-            void operator++(void) { ++_it; }
-        };
-
-        class node_iter {
-        private:
-            const typename std::map<std::string, node_ptr> _nodes;
-            typename std::map<std::string, node_ptr>::const_iterator _it;
-        public:
-            node_iter(const std::map<std::string, node_ptr>& nodes)
-                : _nodes(nodes),
-                  _it(_nodes.begin())
-                {
-                }
-            node_ptr operator*(void) const { return _it->second; }
-            bool done(void) const { return _it == _nodes.end(); }
-            void operator++(void) { ++_it; }
-        };
-
-        class node_viter {
-        private:
-            const typename std::vector<node_ptr> _nodes;
-            typename std::vector<node_ptr>::const_iterator _it;
-        public:
-            node_viter(const std::vector<node_ptr>& nodes)
-                : _nodes(nodes),
-                  _it(_nodes.begin())
-                {
-                }
-            node_ptr operator*(void) const { return *_it; }
-            bool done(void) const { return _it == _nodes.end(); }
-            void operator++(void) { ++_it; }
-        };
-
     private:
         std::map<std::string, node_ptr> _nodes;
+        std::vector<node_ptr> _node_vec;
         std::vector<operation_ptr> _ops;
 
     protected:
@@ -100,15 +55,20 @@ namespace libflo {
         flo(std::map<std::string, node_ptr>& nodes,
             std::vector<operation_ptr>& ops)
             : _nodes(nodes),
+              _node_vec(),
               _ops(ops)
             {
+                for (const auto &pair : _nodes)
+                    _node_vec.push_back(pair.second);
             }
 
     public:
         /* Iterates through this program, either by nodes or by
          * operations. */
-        op_iter operations(void) const { return op_iter(_ops); }
-        node_iter nodes(void) const { return node_iter(_nodes); }
+        const std::vector<operation_ptr>& operations(void) const
+            { return _ops; }
+        const std::vector<node_ptr>& nodes(void) const { return _node_vec; }
+
 
         /* Parses the given file as a Flo file. */
         static const std::shared_ptr<flo> parse(const std::string filename)
@@ -128,7 +88,11 @@ namespace libflo {
             }
 
         /* Adds a node to the list of nodes. */
-        void add_node(node_ptr n) { _nodes[n->name()] = n; }
+        void add_node(node_ptr n)
+            {
+                _nodes[n->name()] = n;
+                _node_vec.push_back(n);
+            }
 
         /* Adds an operation to the list of operations, additionally
          * adding every node if they don't already exist. */
