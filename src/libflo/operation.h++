@@ -139,9 +139,9 @@ namespace libflo {
         size_t width(void) const { return _width.value(); }
         bool known_width(void) const { return _width.known(); }
 
-        const unknown<size_t>& cycle_u(void) const { return _d->cycle_u(); }
-        size_t cycle(void) const { return _d->cycle(); }
-        bool known_cycle(void) const { return _d->known_cycle(); }
+        const unknown<size_t>& dfdepth_u(void) const { return _d->dfdepth_u(); }
+        size_t dfdepth(void) const { return _d->dfdepth(); }
+        bool known_dfdepth(void) const { return _d->known_dfdepth(); }
 
         opcode op(void) const { return _op; }
 
@@ -357,7 +357,7 @@ namespace libflo {
             }
 
         /* Attempts to perform local scheduling -- note that this is
-         * just a simple schedule, it produces the first cycle at
+         * just a simple schedule, it produces the first dfdepth at
          * which this operation could possibly run if dataflow order
          * is observed.. */
         void try_schedule(void)
@@ -369,7 +369,7 @@ namespace libflo {
                 case opcode::REG:
                 case opcode::RND:
                 case opcode::RST:
-                    _d->update_cycle(0);
+                    _d->update_dfdepth(0);
                     break;
 
                     /* Most operations can issue after all sources
@@ -476,8 +476,8 @@ namespace libflo {
 
                 for (auto it = _s.begin(); it != _s.end(); ++it) {
                     fprintf(f, " %s", (*it)->name().c_str());
-                    if ((*it)->known_cycle())
-                        fprintf(f, "@" SIZET_FORMAT, (*it)->cycle());
+                    if ((*it)->known_dfdepth())
+                        fprintf(f, "@" SIZET_FORMAT, (*it)->dfdepth());
                     if ((*it)->known_width())
                         fprintf(f, "'" SIZET_FORMAT, (*it)->width());
                 }
@@ -653,23 +653,23 @@ namespace libflo {
         /* Used for scheduling. */
         void after(const std::vector<size_t>& o)
             {
-                size_t min_cycle = 0;
+                size_t min_dfdepth = 0;
                 for (auto it = o.begin(); it != o.end(); ++it) {
-                    if (this->o(*it)->known_cycle() == false)
+                    if (this->o(*it)->known_dfdepth() == false)
                         return;
 
-                    if (this->o(*it)->cycle() > min_cycle)
-                        min_cycle = this->o(*it)->cycle();
+                    if (this->o(*it)->dfdepth() > min_dfdepth)
+                        min_dfdepth = this->o(*it)->dfdepth();
                 }
-                _d->update_cycle(min_cycle + 1);
+                _d->update_dfdepth(min_dfdepth + 1);
             }
 
     public:
-        /* Sorts operations based on their clock cycle. */
+        /* Sorts operations based on their clock dfdepth. */
         static bool cmp_sched(const std::shared_ptr<operation<node_t>> a,
                               const std::shared_ptr<operation<node_t>> b)
             {
-                return a->cycle() < b->cycle();
+                return a->dfdepth() < b->dfdepth();
             }
 
         /* Parses an operation, looking up the sources and

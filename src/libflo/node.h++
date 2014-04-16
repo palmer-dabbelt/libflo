@@ -44,7 +44,7 @@ namespace libflo {
         unknown<size_t> _depth;
         const bool _is_mem;
         const bool _is_const;
-        unknown<size_t> _cycle;
+        unknown<size_t> _dfdepth;
 
     protected:
         node(const std::string name,
@@ -52,7 +52,7 @@ namespace libflo {
              const unknown<size_t>& depth,
              bool is_mem,
              bool is_const,
-             unknown<size_t> cycle);
+             unknown<size_t> dfdepth);
 
     public:
         /* Accessor functions. */
@@ -68,21 +68,21 @@ namespace libflo {
         bool is_reg(void) const { return !_is_mem; }
         bool is_const(void) const { return _is_const; }
 
-        size_t cycle(void) const { return _cycle.value(); }
-        bool known_cycle(void) const { return _cycle.known(); }
+        size_t dfdepth(void) const { return _dfdepth.value(); }
+        bool known_dfdepth(void) const { return _dfdepth.known(); }
 
         /* These access the unknown-type values, which are useful if
          * you want to copy them somewhere else. */
         const unknown<size_t>& width_u(void) const { return _width; }
         const unknown<size_t>& depth_u(void) const { return _depth; }
-        const unknown<size_t>& cycle_u(void) const { return _cycle; }
+        const unknown<size_t>& dfdepth_u(void) const { return _dfdepth; }
 
         /* Updates a node with a new width -- this will fail if both
          * widths are known and they don't match. */
         void update_width(const unknown<size_t>& width);
 
-        /* Updates a node with a new cycle, failing on mismatch. */
-        void update_cycle(const unknown<size_t>& cycle);
+        /* Updates a node with a new dfdepth, failing on mismatch. */
+        void update_dfdepth(const unknown<size_t>& dfdepth);
 
         /* Returns the value of this constant, parsed as an integer. */
         int const_int(void) const;
@@ -220,7 +220,7 @@ namespace libflo {
 
                     size_t sd = (size_t)depth;
                     auto m = mem<node_t>(d, width, sd);
-                    m->update_cycle(0);
+                    m->update_dfdepth(0);
                     return m;
 
                     break;
@@ -259,14 +259,14 @@ namespace libflo {
         template<class node_t>
         static std::shared_ptr<node_t> reg(const std::string name,
                                            const unknown<size_t>& width,
-                                           const unknown<size_t>& cycle)
+                                           const unknown<size_t>& dfdepth)
             {
                 return std::shared_ptr<node_t>(new node_t(name,
                                                           width,
                                                           unknown<size_t>(0),
                                                           false,
                                                           false,
-                                                          cycle
+                                                          dfdepth
                                                    ));
             }
 

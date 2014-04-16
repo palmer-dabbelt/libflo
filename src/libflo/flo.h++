@@ -257,7 +257,7 @@ namespace libflo {
                     size_t remaining_unknowns = 0;
                     for (auto it = ops.begin(); it != ops.end(); ++it) {
                         auto op = *it;
-                        if (!op->known_cycle())
+                        if (!op->known_dfdepth())
                             remaining_unknowns++;
                     }
                     if (remaining_unknowns == 0)
@@ -275,7 +275,7 @@ namespace libflo {
                     size_t remaining_unknows = 0;
                     for (auto it = ops.begin(); it != ops.end(); ++it) {
                         auto op = *it;
-                        if (!op->known_cycle()) {
+                        if (!op->known_dfdepth()) {
                             fprintf(stderr, "Unable to schedule node '%s'\n",
                                     op->d()->name().c_str());
                             remaining_unknows++;

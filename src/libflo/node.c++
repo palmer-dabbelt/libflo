@@ -34,13 +34,13 @@ node::node(const std::string name,
            const unknown<size_t>& depth,
            bool is_mem,
            bool is_const,
-           unknown<size_t> cycle)
+           unknown<size_t> dfdepth)
     : _name(str2name(name)),
       _width(str2width(name, width)),
       _depth(depth),
       _is_mem(is_mem),
       _is_const(is_const),
-      _cycle(cycle)
+      _dfdepth(dfdepth)
 {
 }
 
@@ -61,19 +61,19 @@ void node::update_width(const unknown<size_t>& width)
         _width = width;
 }
 
-void node::update_cycle(const unknown<size_t>& cycle)
+void node::update_dfdepth(const unknown<size_t>& dfdepth)
 {
-    /* Checks that if we do overwrite a cycle that it doesn't change
+    /* Checks that if we do overwrite a dfdepth that it doesn't change
      * in the process. */
-    if (_cycle.known() && cycle.known()) {
-        if (_cycle.value() != cycle.value()) {
-            fprintf(stderr, "Re-scheduling node cycle\n");
+    if (_dfdepth.known() && dfdepth.known()) {
+        if (_dfdepth.value() != dfdepth.value()) {
+            fprintf(stderr, "Re-scheduling node dfdepth\n");
             abort();
         }
     }
 
-    if (cycle.known())
-        _cycle = cycle;
+    if (dfdepth.known())
+        _dfdepth = dfdepth;
 }
 
 int node::const_int(void) const
