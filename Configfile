@@ -48,3 +48,9 @@ TESTSRC     += raw-apos_regshift.bash
 
 # These tests run against a (cached) version of Chisel
 TESTSRC     += chisel_counter-128.bash
+
+# This is designed to run 
+LIBEXECS    += libflo/flo-memcheck
+DEPLIBS     += flo
+SOURCES     += memcheck.c++
+

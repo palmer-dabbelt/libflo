@@ -1,5 +1,6 @@
 /bin/
 /lib/
+/libexec/
 /obj/
 /check/
 /.scala_dependencies
