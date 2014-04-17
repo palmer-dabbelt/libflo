@@ -19,6 +19,7 @@ LIBRARIES   += libflo.so
 SOURCES     += libflo/node.c++
 SOURCES     += libflo/filenode.c++
 SOURCES     += libflo/version.c++
+SOURCES     += libflo/flo.c++
 
 CONFIG      += find_library_headers
 
