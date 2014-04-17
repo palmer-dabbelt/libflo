@@ -425,8 +425,13 @@ namespace libflo {
         /* Writes this operation out to standard out as a string. */
         void writeln(FILE *f) const
             {
-                if (_op != opcode::INIT)
-                    fprintf(f, "%s = ", _d->name().c_str());
+                /* INIT is a special case for Jonathan's tools. */
+                if (_op == opcode::INIT) {
+                    fprintf(f, "%s\n", to_string().c_str());
+                    return;
+                }
+
+                fprintf(f, "%s = ", _d->name().c_str());
 
                 fprintf(f, "%s",
                         opcode_to_string(_op).c_str());
@@ -473,6 +478,19 @@ namespace libflo {
          * operation. */
         const std::string to_string(void) const
             {
+                /* Here's a special case for Jonathan's tools... */
+                if (_op == opcode::INIT) {
+                    char buffer[LINE_MAX];
+                    snprintf(buffer, LINE_MAX, "%s %s %s %s'" SIZET_FORMAT,
+                             "init",
+                             s()->name().c_str(),
+                             t()->name().c_str(),
+                             u()->name().c_str(),
+                             u()->width()
+                        );
+                    return buffer;
+                }
+
                 char opstr[LINE_MAX];
                 if (_width.known()) {
                     snprintf(opstr, LINE_MAX, "%s'" SIZET_FORMAT,
