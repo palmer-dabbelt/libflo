@@ -98,9 +98,7 @@ namespace libflo {
          * adding every node if they don't already exist. */
         void add_op(operation_ptr o)
             {
-                for (auto it = o->operands(); !it.done(); ++it) {
-                    auto node = *it;
-
+                for (const auto& node: o->operands()) {
                     auto l = _nodes.find(node->name());
                     if (l == _nodes.end())
                         add_node(node);
