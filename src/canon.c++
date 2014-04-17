@@ -60,10 +60,10 @@ int main(int argc, const char **argv)
     }
 
     for (const auto& op : flof->operations()) {
-        for (auto it = op->operands(); !it.done(); ++it) {
-            if (!(*it)->known_width()) {
+        for (const auto& node: op->operands()) {
+            if (node->known_width() == false) {
                 fprintf(stderr, "Unknown width of node '%s' in '%s'\n",
-                        (*it)->name().c_str(),
+                        node->name().c_str(),
                         op->to_string().c_str()
                     );
                 abort();

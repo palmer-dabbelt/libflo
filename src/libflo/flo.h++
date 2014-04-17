@@ -199,11 +199,9 @@ namespace libflo {
                     for (auto it = ops.begin(); it != ops.end(); ++it) {
                         auto op = *it;
 
-                        for (auto it = op->operands(); !it.done(); ++it) {
-                            auto node = *it;
-                            if (!node->known_width())
+                        for (const auto& node: op->operands())
+                            if (node->known_width() == false)
                                 remaining_unknowns++;
-                        }
                     }
                     if (remaining_unknowns == 0)
                         break;
@@ -221,8 +219,7 @@ namespace libflo {
                     for (auto it = ops.begin(); it != ops.end(); ++it) {
                         auto op = *it;
 
-                        for (auto it = op->operands(); !it.done(); ++it) {
-                            auto node = *it;
+                        for (const auto& node: op->operands()) {
                             if (!node->known_width()) {
                                 fprintf(stderr, "Unable to infer '%s' in ",
                                         node->name().c_str());
