@@ -49,6 +49,8 @@ int main(int argc, const char **argv)
 
     auto flof = flo<node, operation<node> >::parse(argv[1]);
 
+    /* Compute the depth of the circuit, which is the critical
+     * path. */
     size_t depth = 0;
 
     for (const auto& op: flof->operations())
@@ -56,4 +58,18 @@ int main(int argc, const char **argv)
             depth = op->dfdepth();
 
     printf("Depth: " SIZET_FORMAT "\n", depth + 1);
+
+    /* Compute the width of the circuit, which is the largest number
+     * of nodes at a particular depth. */
+    std::vector<size_t> width_hist(depth + 1, 0);
+
+    for (const auto& op: flof->operations())
+        width_hist[op->dfdepth()]++;
+
+    size_t width = 0;
+    for (const auto& test_width: width_hist)
+        if (test_width > width)
+            width = test_width;
+
+    printf("Width: " SIZET_FORMAT "\n", width);
 }

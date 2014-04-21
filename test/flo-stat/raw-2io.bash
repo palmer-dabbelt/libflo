@@ -9,6 +9,7 @@ EOF
 
 cat >test.gold <<EOF
 Depth: 2
+Width: 2
 EOF
 
 #include "harness.bash"
