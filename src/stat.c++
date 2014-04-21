@@ -23,6 +23,7 @@
 #include <libflo/node.h++>
 #include <libflo/operation.h++>
 #include <libflo/version.h++>
+#include <libflo/sizet_printf.h++>
 #include <string.h>
 #include "version.h"
 using namespace libflo;
@@ -54,5 +55,5 @@ int main(int argc, const char **argv)
         if (op->dfdepth() > depth)
             depth = op->dfdepth();
 
-    printf("Depth: %lu\n", depth + 1);
+    printf("Depth: " SIZET_FORMAT "\n", depth + 1);
 }
