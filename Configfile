@@ -55,3 +55,9 @@ LIBEXECS    += libflo/flo-memcheck
 DEPLIBS     += flo
 SOURCES     += memcheck.c++
 
+# This reports the dataflow depth of a flo file.
+BINARIES    += flo-stat
+DEPLIBS     += flo
+SOURCES     += stat.c++
+TESTSRC     += raw-io.bash
+TESTSRC     += raw-2io.bash
