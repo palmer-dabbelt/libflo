@@ -24,6 +24,7 @@
 
 #include "opcode.h++"
 #include "unknown.h++"
+#include "sizet_printf.h++"
 #include <map>
 #include <memory>
 #include <string>
@@ -117,6 +118,9 @@ namespace libflo {
                 for (size_t i = 0; i < strlen(buffer); ++i) {
                     if (i == 0 && buffer[i] == '-')
                         continue;
+
+                    if (buffer[i] == '\'' || buffer[i] == '/')
+                        break;
 
                     if (!isdigit(buffer[i])) {
                         return NULL;
@@ -246,8 +250,12 @@ namespace libflo {
         template<class node_t>
         static std::shared_ptr<node_t> constant(const std::string name)
             {
-                return std::shared_ptr<node_t>(new node_t(str2name(name),
-                                                          str2width(name),
+                auto value = str2name(name);
+                auto width = str2width(name);
+                auto posval = str2pos(value, width);
+
+                return std::shared_ptr<node_t>(new node_t(posval,
+                                                          width,
                                                           unknown<size_t>(0),
                                                           false,
                                                           true,
@@ -282,6 +290,30 @@ namespace libflo {
                                                           false,
                                                           unknown<size_t>()
                                                    ));
+            }
+
+    private:
+        static std::string str2pos(const std::string& value,
+                                   const unknown<size_t>& width)
+            {
+                if (!width.known())
+                    return value;
+                if (value.c_str()[0] != '-')
+                    return value;
+
+                if (width.value() > 63) {
+                    fprintf(stderr, "Unable to parse large negative\n");
+                    fprintf(stderr, "  value: '%s'\n",
+                            value.c_str());
+                    fprintf(stderr, "  width: " SIZET_FORMAT "\n",
+                            width.value());
+                    abort();
+                }
+
+                int64_t ll = atoll(value.c_str());
+                uint64_t ull = ll;
+                ull &= ((1 << width.value()) - 1);
+                return std::to_string(ull);
             }
     };
 }
