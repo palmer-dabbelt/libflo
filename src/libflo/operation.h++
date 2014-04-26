@@ -706,6 +706,7 @@ namespace libflo {
                 auto dl = n.find(d);
                 if (dl == n.end()) {
                     fprintf(stderr, "Tried to read operation without dest\n");
+                    fprintf(stderr, "  dest: '%s'\n", d.c_str());
                     abort();
                 }
                 auto dp = dl->second;
