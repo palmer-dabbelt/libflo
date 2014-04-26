@@ -257,9 +257,6 @@ namespace libflo {
 
                 case opcode::LD:
                 case opcode::ST:
-                    fprintf(stderr, "FIXME: infer widths for memory ops\n");
-                    writeln_debug(stderr);
-                    abort();
                     break;
 
                     /* FIXME: I don't think there's anything we can do
@@ -406,9 +403,7 @@ namespace libflo {
                      * should do... */
                 case opcode::LD:
                 case opcode::ST:
-                    fprintf(stderr, "FIXME: schedule memory ops\n");
-                    writeln_debug(stderr);
-                    abort();
+                    after(std::vector<size_t>({1, 2}));
                     break;
 
                     /* These operations just don't do anything, so it
