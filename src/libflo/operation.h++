@@ -194,7 +194,8 @@ namespace libflo {
                 case opcode::REG:
                 case opcode::SUB:
                 case opcode::XOR:
-                    must_match(std::vector<size_t>({0, 1, 2}));
+                    must_match(std::vector<size_t>({0, 1, 2}),
+                               _op == opcode::ADD);
                     if (o(0)->known_width())
                         _width = o(0)->width();
                     break;
@@ -554,8 +555,11 @@ namespace libflo {
 
     private:
         /* Here's some helper functions for width inference.  They
-         * shouldn't be useful to anyone else. */
-        void must_match(const std::vector<size_t>& o)
+         * shouldn't be useful to anyone else.  The "mem_addr" flag
+         * tells us if te should treat memories as addresses (versus
+         * their default, which treans them as the values stored
+         * within them). */
+        void must_match(const std::vector<size_t>& o, bool mem_addr=false)
             {
                 /* Attempt to find a single known width operand so we
                  * can infer the widths of everything else.  Check to
@@ -564,6 +568,24 @@ namespace libflo {
                 std::shared_ptr<node_t> known = NULL;
                 for (auto it = o.begin(); it != o.end(); ++it) {
                     auto node = this->o(*it);
+
+                    /* Sometimes memories are used as addresses to do
+                     * an offset calculation.  This essentially means
+                     * we have to switch the width and the depth.
+                     * Note that this is a big hack right now, but
+                     * with any luck this will eventually go away (as
+                     * it doesn't really feel like something that
+                     * should be inside a Flo file). */
+                    if (node->is_mem() && (mem_addr == true)) {
+                        size_t log2up = (size_t)(ceil(log2(node->depth())));
+
+                        for (const auto i: o)
+                            if (i != *it)
+                                this->o(i)->update_width(log2up);
+
+                        return;
+                    }
+
                     if (node->known_width()) {
                         if (known != NULL) {
                             if (known->width() != node->width()) {
