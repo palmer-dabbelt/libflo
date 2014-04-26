@@ -131,6 +131,9 @@ namespace libflo {
         static const std::shared_ptr<flo_t>
         parse_help(const std::string filename)
             {
+                int w = 0, h = 0, z;
+                bool dims_valid = false;
+
                 /* Reads a file line by line, saving it into memory. */
                 std::vector<std::shared_ptr<filenode>> lines;
                 {
@@ -142,8 +145,12 @@ namespace libflo {
                     }
 
                     char buffer[LINE_MAX];
-                    while (fgets(buffer, LINE_MAX, f) != NULL) 
-                        lines.push_back(filenode::parse(buffer));
+                    while (fgets(buffer, LINE_MAX, f) != NULL) {
+                        if (sscanf(buffer, "dims %d,%d,%d\n", &w, &h, &z) == 3)
+                            dims_valid = true;
+                        else
+                            lines.push_back(filenode::parse(buffer));
+                    }
                 }
 
                 /* The first thing we need to do is produce a
@@ -156,8 +163,10 @@ namespace libflo {
                     auto node = node::parse<node_t>(line->d,
                                                     line->opcode,
                                                     line->width,
-                                                    line->s);
+                                                    line->s,
+                                                    w, h, dims_valid);
                     if (node != NULL) {
+                        nodes[line->d] = node;
                         nodes[node->name()] = node;
                     }
                 }

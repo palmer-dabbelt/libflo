@@ -46,6 +46,7 @@ namespace libflo {
         const bool _is_mem;
         const bool _is_const;
         unknown<size_t> _dfdepth;
+        unknown<size_t> x, y;
 
     protected:
         node(const std::string name,
@@ -135,11 +136,38 @@ namespace libflo {
          * you're inside the parser... */
         template <class node_t>
         static std::shared_ptr<node_t>
-        parse(const std::string d,
-              const opcode& op,
+        parse(const std::string dw,
+              const opcode& op_in,
               const unknown<size_t>& width,
-              const std::vector<std::string>& s)
+              const std::vector<std::string>& s,
+              int array_width, int array_height, bool dims_valid)
             {
+                std::string d = dw;
+                unknown<size_t> x, y;
+
+                /* If this node has been placed in continuous
+                 * coodinates then we need to convert those to proper
+                 * coordinates by multiplying by the array size. */
+                float dx, dy;
+                char buf[LINE_MAX];
+                if (sscanf(dw.c_str(), "%[^$]$%f,%f", buf, &dx, &dy) == 3) {
+                    if (dims_valid == false) {
+                        fprintf(stderr, "Requested dims but invalid\n");
+                        abort();
+                    }
+
+                    d = buf;
+                    x = ((dx + 1) / 2) * array_width;
+                    y = ((dy + 1) / 2) * array_height;
+                }
+
+                /* FIXME: Jonathan's placement tool outputs NOPs
+                 * sometimes.  It appears these always come from IN
+                 * nodes, but I'm not really sure about that... */
+                opcode op = op_in;
+                if (op == opcode::NOP)
+                    op = opcode::IN;
+
                 switch (op) {
                     /* These operations produce a fixed output width
                      * and are always availiable -- essentially theh
