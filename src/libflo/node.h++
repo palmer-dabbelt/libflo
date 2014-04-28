@@ -46,7 +46,7 @@ namespace libflo {
         const bool _is_mem;
         const bool _is_const;
         unknown<size_t> _dfdepth;
-        unknown<size_t> x, y;
+        unknown<size_t> _x, _y;
 
     protected:
         node(const std::string name,
@@ -54,7 +54,9 @@ namespace libflo {
              const unknown<size_t>& depth,
              bool is_mem,
              bool is_const,
-             unknown<size_t> dfdepth);
+             unknown<size_t> dfdepth,
+             const unknown<size_t>& x,
+             const unknown<size_t>& y);
 
     public:
         /* Accessor functions. */
@@ -72,6 +74,12 @@ namespace libflo {
 
         size_t dfdepth(void) const { return _dfdepth.value(); }
         bool known_dfdepth(void) const { return _dfdepth.known(); }
+
+        bool pos_known(void) const { return _x.known() && _y.known(); }
+        size_t x(void) const { return _x.value(); }
+        size_t y(void) const { return _y.value(); }
+        std::pair<size_t, size_t> pos(void) const
+            { return std::make_pair(x(), y()); }
 
         /* These access the unknown-type values, which are useful if
          * you want to copy them somewhere else. */
@@ -175,7 +183,8 @@ namespace libflo {
                 case opcode::RST:
                     return reg<node_t>(d,
                                        unknown<size_t>(1),
-                                       unknown<size_t>(0)
+                                       unknown<size_t>(0),
+                                       x, y
                         );
 
                     /* These operations simply produce a single bit as
@@ -186,7 +195,8 @@ namespace libflo {
                 case opcode::NEQ:
                     return reg<node_t>(d,
                                        unknown<size_t>(1),
-                                       unknown<size_t>());
+                                       unknown<size_t>(),
+                                       x, y);
 
                     /* These operations produce a variable output
                      * width but are always ready. */
@@ -194,7 +204,8 @@ namespace libflo {
                 case opcode::REG:
                     return reg<node_t>(d,
                                        width,
-                                       unknown<size_t>(0));
+                                       unknown<size_t>(0),
+                                       x, y);
 
                     /* These are "normal" nodes, which means their
                      * output width is specified directly by the
@@ -224,7 +235,8 @@ namespace libflo {
                 case opcode::XOR:
                     return reg<node_t>(d,
                                        width,
-                                       unknown<size_t>());
+                                       unknown<size_t>(),
+                                       x, y);
                     break;
 
                     /* Some operations don't have their output width
@@ -234,7 +246,8 @@ namespace libflo {
                 case opcode::CATD:
                     return reg<node_t>(d,
                                        unknown<size_t>(),
-                                       unknown<size_t>());
+                                       unknown<size_t>(),
+                                       x, y);
 
                     /* Memories are special: they have a depth
                      * paramater as well as a width parameter.  It's
@@ -244,14 +257,16 @@ namespace libflo {
                 case opcode::MEM:
                 {
                     if (s.size() == 0)
-                        return mem<node_t>(d, width, unknown<size_t>());
+                        return mem<node_t>(d, width, unknown<size_t>(),
+                                           x, y);
 
                     long long depth = atoll(s[0].c_str());
                     if (depth == -1)
-                        return mem<node_t>(d, width, unknown<size_t>());
+                        return mem<node_t>(d, width, unknown<size_t>(),
+                                           x, y);
 
                     size_t sd = (size_t)depth;
-                    auto m = mem<node_t>(d, width, sd);
+                    auto m = mem<node_t>(d, width, sd, x, y);
                     m->update_dfdepth(0);
                     return m;
 
@@ -261,7 +276,8 @@ namespace libflo {
                 case opcode::INIT:
                     return reg<node_t>(d,
                                        unknown<size_t>(1),
-                                       unknown<size_t>(0));
+                                       unknown<size_t>(0),
+                                       x, y);
 
                 /* These operations don't actually produce a node. */
                 case opcode::EAT:
@@ -287,7 +303,9 @@ namespace libflo {
                                                           unknown<size_t>(0),
                                                           false,
                                                           true,
-                                                          unknown<size_t>(0)
+                                                          unknown<size_t>(0),
+                                                          unknown<size_t>(),
+                                                          unknown<size_t>()
                                                    ));
             }
 
@@ -295,28 +313,36 @@ namespace libflo {
         template<class node_t>
         static std::shared_ptr<node_t> reg(const std::string name,
                                            const unknown<size_t>& width,
-                                           const unknown<size_t>& dfdepth)
+                                           const unknown<size_t>& dfdepth,
+                                           const unknown<size_t>& x,
+                                           const unknown<size_t>& y)
             {
                 return std::shared_ptr<node_t>(new node_t(name,
                                                           width,
                                                           unknown<size_t>(0),
                                                           false,
                                                           false,
-                                                          dfdepth
+                                                          dfdepth,
+                                                          x,
+                                                          y
                                                    ));
             }
 
         template<class node_t>
         static std::shared_ptr<node_t> mem(const std::string name,
                                            const unknown<size_t>& width,
-                                           const unknown<size_t>& depth)
+                                           const unknown<size_t>& depth,
+                                           const unknown<size_t>& x,
+                                           const unknown<size_t>& y)
             {
                 return std::shared_ptr<node_t>(new node_t(name,
                                                           width,
                                                           depth,
                                                           true,
                                                           false,
-                                                          unknown<size_t>()
+                                                          unknown<size_t>(),
+                                                          x,
+                                                          y
                                                    ));
             }
 

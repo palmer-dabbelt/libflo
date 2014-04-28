@@ -34,13 +34,17 @@ node::node(const std::string name,
            const unknown<size_t>& depth,
            bool is_mem,
            bool is_const,
-           unknown<size_t> dfdepth)
+           unknown<size_t> dfdepth,
+           const unknown<size_t>& x,
+           const unknown<size_t>& y)
     : _name(str2name(name)),
       _width(str2width(name, width)),
       _depth(depth),
       _is_mem(is_mem),
       _is_const(is_const),
-      _dfdepth(dfdepth)
+      _dfdepth(dfdepth),
+      _x(x),
+      _y(y)
 {
 }
 
