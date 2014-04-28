@@ -158,6 +158,7 @@ namespace libflo {
                  * later when looking up these elements.  Essentially
                  * this keeps all the string lookups inside here. */
                 std::map<std::string, node_ptr> nodes;
+                std::map<std::string, node_ptr> lnodes;
                 for (auto it = lines.begin(); it != lines.end(); ++it) {
                     auto line = *it;
                     auto node = node::parse<node_t>(line->d,
@@ -166,7 +167,8 @@ namespace libflo {
                                                     line->s,
                                                     w, h, dims_valid);
                     if (node != NULL) {
-                        nodes[line->d] = node;
+                        lnodes[line->d] = node;
+                        lnodes[node->name()] = node;
                         nodes[node->name()] = node;
                     }
                 }
@@ -179,7 +181,7 @@ namespace libflo {
                 for (auto it = lines.begin(); it != lines.end(); ++it) {
                     auto line = *it;
                     auto op = operation_t::template parse<operation_t>(
-                        nodes,
+                        lnodes,
                         line->d,
                         line->opcode,
                         line->width,
