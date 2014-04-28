@@ -86,6 +86,8 @@ namespace libflo {
         const unknown<size_t>& width_u(void) const { return _width; }
         const unknown<size_t>& depth_u(void) const { return _depth; }
         const unknown<size_t>& dfdepth_u(void) const { return _dfdepth; }
+        const unknown<size_t>& x_u(void) const { return _x; }
+        const unknown<size_t>& y_u(void) const { return _y; }
 
         /* Updates a node with a new width -- this will fail if both
          * widths are known and they don't match. */
