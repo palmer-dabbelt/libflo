@@ -47,6 +47,7 @@ TESTSRC     += raw-slash_mem.bash
 # Some hand-written tests that use the new file format with 's
 TESTSRC     += raw-apos_regshift.bash
 TESTSRC     += raw-apos_negwidth.bash
+TESTSRC     += raw-apos_badwidth.bash
 
 # These tests run against a (cached) version of Chisel
 TESTSRC     += chisel_counter-128.bash

@@ -603,7 +603,8 @@ namespace libflo {
                             }
                         }
 
-                        known = node;
+                        if (known == NULL)
+                            known = node;
                     }
                 }
 
