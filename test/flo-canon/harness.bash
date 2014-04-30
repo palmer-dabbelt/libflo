@@ -66,7 +66,7 @@ then
     exit 0
 fi
 
-valgrind -q $PTEST_BINARY $TEST.in >$TEST.out 2>$TEST.valgrind
+valgrind --log-file=$TEST.valgrind -q $PTEST_BINARY $TEST.in >$TEST.out
 cat $TEST.valgrind
 
 if [[ "$(cat $TEST.valgrind | wc -l)" != 0 ]]
@@ -88,7 +88,7 @@ then
 fi
 
 # Run a second test, ensuring that libflo can parse its own output
-valgrind -q $PTEST_BINARY $TEST.out >$TEST.out.out 2>$TEST.out.valgrind
+valgrind --log-file=$TEST.out.valgrind -q $PTEST_BINARY $TEST.out >$TEST.out.out
 cat $TEST.out.valgrind
 
 if [[ "$(cat $TEST.out.valgrind | wc -l)" != 0 ]]
