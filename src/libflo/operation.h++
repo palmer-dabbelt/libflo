@@ -22,6 +22,7 @@
 #ifndef LIBFLO__OPERATION_HXX
 #define LIBFLO__OPERATION_HXX
 
+#include "globals.h++"
 #include "sizet_printf.h++"
 #include "unknown.h++"
 #include <map>
@@ -597,7 +598,8 @@ namespace libflo {
                                         node->name().c_str(),
                                         node->width());
                                 writeln_debug(stderr);
-                                abort();
+                                if (globals::allow_bad_widths == false)
+                                    abort();
                             }
                         }
 
@@ -651,7 +653,8 @@ namespace libflo {
                 if (unknows == 0 && i_sum != o_sum) {
                     fprintf(stderr, "Mismatches width sum\n");
                     writeln_debug(stderr);
-                    abort();
+                    if (globals::allow_bad_widths == false)
+                        abort();
                 }
 
                 /* If the one unknown width is the LHS then just set it. */

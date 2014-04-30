@@ -20,6 +20,7 @@
  */
 
 #include "node.h++"
+#include "globals.h++"
 #include "sizet_printf.h++"
 #include <string>
 #include <string.h>
@@ -57,7 +58,8 @@ void node::update_width(const unknown<size_t>& width)
             fprintf(stderr, "Re-inferring node width: '%s'\n", name().c_str());
             fprintf(stderr, "  Old width: " SIZET_FORMAT "\n", _width.value());
             fprintf(stderr, "  New width: " SIZET_FORMAT "\n", width.value());
-            abort();
+            if (globals::allow_bad_widths == false)
+                abort();
         }
     }
 
