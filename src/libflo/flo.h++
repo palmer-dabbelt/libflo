@@ -26,6 +26,7 @@
 #include "node.h++"
 #include "operation.h++"
 #include <algorithm>
+#include <functional>
 #include <map>
 #include <memory>
 #include <string>
@@ -43,6 +44,14 @@ namespace libflo {
     template<class node_t, class operation_t> class flo {
         typedef std::shared_ptr<operation_t> operation_ptr;
         typedef std::shared_ptr<node_t> node_ptr;
+        typedef std::function<node_ptr(const std::string name,
+                                       const unknown<size_t>& width,
+                                       const unknown<size_t>& depth,
+                                       bool is_mem,
+                                       bool is_const,
+                                       unknown<size_t> dfdepth,
+                                       const unknown<std::string>& posn
+            )> node_create_func_t;
 
     private:
         std::map<std::string, node_ptr> _nodes;
@@ -106,9 +115,16 @@ namespace libflo {
     public:
         /* Parses the given file as a Flo file. */
         static const std::shared_ptr<flo>
+        parse(const std::string filename,
+              node_create_func_t node_func)
+            {
+                return parse_help<flo>(filename, node_func);
+            }
+
+        static const std::shared_ptr<flo>
         parse(const std::string filename)
             {
-                return parse_help<flo>(filename);
+                return parse_help<flo>(filename, create_node);
             }
 
         /* Creates a new, empty, Flo structure that can be filled in
@@ -122,6 +138,26 @@ namespace libflo {
                 return std::shared_ptr<flo>(new flo(nodes, ops));
             }
 
+        /* A default function for creating a new node, which can be
+         * overridder by the user in case they need more information
+         * to construct their class. */
+        static node_ptr create_node(const std::string name,
+                                    const unknown<size_t>& width,
+                                    const unknown<size_t>& depth,
+                                    bool is_mem,
+                                    bool is_const,
+                                    unknown<size_t> dfdepth,
+                                    const unknown<std::string>& posn)
+            {
+                return std::make_shared<node_t>(name,
+                                                width,
+                                                depth,
+                                                is_mem,
+                                                is_const,
+                                                dfdepth,
+                                                posn);
+            }
+
     protected:
         /* Here's the code that does the actual parsing work -- note
          * that this should only be used by subclasses of Flo, the
@@ -130,7 +166,8 @@ namespace libflo {
          * flo you need to output in case you need to */
         template <class flo_t>
         static const std::shared_ptr<flo_t>
-        parse_help(const std::string filename)
+        parse_help(const std::string filename,
+                   node_create_func_t node_func)
             {
                 /* Reads a file line by line, saving it into memory. */
                 std::vector<std::shared_ptr<filenode>> lines;
@@ -158,7 +195,8 @@ namespace libflo {
                     auto node = node::parse<node_t>(line->d,
                                                     line->opcode,
                                                     line->width,
-                                                    line->s
+                                                    line->s,
+                                                    node_func
                         );
                     if (node != NULL) {
                         lnodes[line->d] = node;
@@ -179,7 +217,8 @@ namespace libflo {
                         line->d,
                         line->opcode,
                         line->width,
-                        line->s
+                        line->s,
+                        node_func
                         );
                     if (op != NULL)
                         ops.push_back(op);

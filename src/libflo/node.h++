@@ -22,6 +22,10 @@
 #ifndef LIBFLO__NODE_HXX
 #define LIBFLO__NODE_HXX
 
+namespace libflo {
+    template<class node_t, class op_t> class flo;
+}
+
 #include "opcode.h++"
 #include "unknown.h++"
 #include "sizet_printf.h++"
@@ -39,6 +43,19 @@ namespace libflo {
     /* Everything in the dataflow machine that can have a value is
      * considered a node. */
     class node {
+        template<class node_t, class op_t> friend class flo;
+
+        template <class node_t>
+        using create_func_t = 
+            std::function<std::shared_ptr<node_t>(const std::string name,
+                                                  const unknown<size_t>& w,
+                                                  const unknown<size_t>& d,
+                                                  bool is_mem,
+                                                  bool is_const,
+                                                  unknown<size_t> dfdepth,
+                                                  const unknown<std::string>&)
+                          >;
+
     private:
         const std::string _name;
         unknown<size_t> _width;
@@ -48,7 +65,14 @@ namespace libflo {
         unknown<size_t> _dfdepth;
         unknown<std::string> _posn;
 
-    protected:
+    public:
+        /* You should almost certainly be using ::parse instead, as
+         * it'll be pretty trick to actually build one of these
+         * yourself.  This should be protected, but because of all the
+         * function pointer stuff going on it actually gets pretty
+         * tough to ensure that everything is a friend of this class.
+         * The one case you definately want to use this is inside
+         * subclasses, as you have to. */
         node(const std::string name,
              const unknown<size_t>& width,
              const unknown<size_t>& depth,
@@ -110,7 +134,8 @@ namespace libflo {
         template <class node_t>
         static std::shared_ptr<node_t>
         lookup(const std::map<std::string, std::shared_ptr<node_t> >& map,
-               const std::string str)
+               const std::string str,
+               create_func_t<node_t> create_func)
             {
                 auto l = map.find(str);
                 if (l != map.end())
@@ -133,7 +158,7 @@ namespace libflo {
                     }
                 }
 
-                return node::constant<node_t>(str);
+                return node::constant<node_t>(str, create_func);
             }
 
         /* Parses a node to determine exactly what sort of node it
@@ -144,7 +169,8 @@ namespace libflo {
         parse(const std::string dw,
               const opcode& op_in,
               const unknown<size_t>& width,
-              const std::vector<std::string>& s)
+              const std::vector<std::string>& s,
+              create_func_t<node_t> create_node)
             {
                 std::string d = dw;
                 unknown<std::string> posn;
@@ -174,7 +200,8 @@ namespace libflo {
                     return reg<node_t>(d,
                                        unknown<size_t>(1),
                                        unknown<size_t>(0),
-                                       posn
+                                       posn,
+                                       create_node
                         );
 
                     /* These operations simply produce a single bit as
@@ -186,7 +213,8 @@ namespace libflo {
                     return reg<node_t>(d,
                                        unknown<size_t>(1),
                                        unknown<size_t>(),
-                                       posn
+                                       posn,
+                                       create_node
                         );
 
                     /* These operations produce a variable output
@@ -196,7 +224,8 @@ namespace libflo {
                     return reg<node_t>(d,
                                        width,
                                        unknown<size_t>(0),
-                                       posn
+                                       posn,
+                                       create_node
                         );
 
                     /* These are "normal" nodes, which means their
@@ -228,7 +257,8 @@ namespace libflo {
                     return reg<node_t>(d,
                                        width,
                                        unknown<size_t>(),
-                                       posn
+                                       posn,
+                                       create_node
                         );
                     break;
 
@@ -240,7 +270,8 @@ namespace libflo {
                     return reg<node_t>(d,
                                        unknown<size_t>(),
                                        unknown<size_t>(),
-                                       posn
+                                       posn,
+                                       create_node
                         );
 
                     /* Memories are special: they have a depth
@@ -254,7 +285,8 @@ namespace libflo {
                         return mem<node_t>(d,
                                            width,
                                            unknown<size_t>(),
-                                           posn
+                                           posn,
+                                           create_node
                             );
 
                     long long depth = atoll(s[0].c_str());
@@ -262,11 +294,12 @@ namespace libflo {
                         return mem<node_t>(d,
                                            width,
                                            unknown<size_t>(),
-                                           posn
+                                           posn,
+                                           create_node
                             );
 
                     size_t sd = (size_t)depth;
-                    auto m = mem<node_t>(d, width, sd, posn);
+                    auto m = mem<node_t>(d, width, sd, posn, create_node);
                     m->update_dfdepth(0);
                     return m;
 
@@ -277,7 +310,8 @@ namespace libflo {
                     return reg<node_t>(d,
                                        unknown<size_t>(1),
                                        unknown<size_t>(0),
-                                       posn
+                                       posn,
+                                       create_node
                         );
 
                 /* These operations don't actually produce a node. */
@@ -293,20 +327,21 @@ namespace libflo {
 
         /* Generates a new constant-valued node. */
         template<class node_t>
-        static std::shared_ptr<node_t> constant(const std::string name)
+        static std::shared_ptr<node_t> constant(const std::string name,
+                                                create_func_t<node_t> create_node)
             {
                 auto value = str2name(name);
                 auto width = str2width(name);
                 auto posval = str2pos(value, width);
 
-                return std::shared_ptr<node_t>(new node_t(posval,
-                                                          width,
-                                                          unknown<size_t>(0),
-                                                          false,
-                                                          true,
-                                                          unknown<size_t>(0),
-                                                          unknown<std::string>()
-                                                   ));
+                return create_node(posval,
+                                   width,
+                                   unknown<size_t>(0),
+                                   false,
+                                   true,
+                                   unknown<size_t>(0),
+                                   unknown<std::string>()
+                    );
             }
 
 
@@ -314,32 +349,34 @@ namespace libflo {
         static std::shared_ptr<node_t> reg(const std::string name,
                                            const unknown<size_t>& width,
                                            const unknown<size_t>& dfdepth,
-                                           const unknown<std::string>& posn)
+                                           const unknown<std::string>& posn,
+                                           create_func_t<node_t> create_node)
             {
-                return std::shared_ptr<node_t>(new node_t(name,
-                                                          width,
-                                                          unknown<size_t>(0),
-                                                          false,
-                                                          false,
-                                                          dfdepth,
-                                                          posn
-                                                   ));
+                return create_node(name,
+                                   width,
+                                   unknown<size_t>(0),
+                                   false,
+                                   false,
+                                   dfdepth,
+                                   posn
+                    );
             }
 
         template<class node_t>
         static std::shared_ptr<node_t> mem(const std::string name,
                                            const unknown<size_t>& width,
                                            const unknown<size_t>& depth,
-                                           const unknown<std::string>& posn)
+                                           const unknown<std::string>& posn,
+                                           create_func_t<node_t> create_node)
             {
-                return std::shared_ptr<node_t>(new node_t(name,
-                                                          width,
-                                                          depth,
-                                                          true,
-                                                          false,
-                                                          unknown<size_t>(),
-                                                          posn
-                                                   ));
+                return create_node(name,
+                                   width,
+                                   depth,
+                                   true,
+                                   false,
+                                   unknown<size_t>(),
+                                   posn
+                    );
             }
 
     private:

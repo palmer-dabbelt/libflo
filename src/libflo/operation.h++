@@ -40,6 +40,16 @@ namespace libflo {
      * they take as their input the values of some nodes and produce
      * as an output the values of other nodes. */
     template<class node_t> class operation {
+        typedef std::shared_ptr<node_t> node_ptr;
+        typedef std::function<node_ptr(const std::string name,
+                                       const unknown<size_t>& width,
+                                       const unknown<size_t>& depth,
+                                       bool is_mem,
+                                       bool is_const,
+                                       unknown<size_t> dfdepth,
+                                       const unknown<std::string>& posn
+            )> node_create_func_t;
+
     private:
         std::shared_ptr<node_t> _d;
         unknown<size_t> _width;
@@ -714,6 +724,18 @@ namespace libflo {
               const unknown<size_t>& width,
               const std::vector<std::string>& s)
             {
+                return parse(n, d, op, width, s, default_node_func);
+            }
+
+        template<class operation_t>
+        static std::shared_ptr<operation_t>
+        parse(const std::map<std::string, std::shared_ptr<node_t>>& n,
+              const std::string d,
+              const opcode& op,
+              const unknown<size_t>& width,
+              const std::vector<std::string>& s,
+              node_create_func_t node_func)
+            {
                 /* Here we look up the actual node data for everything
                  * this operation touches. */
                 auto dl = n.find(d);
@@ -728,7 +750,7 @@ namespace libflo {
                 for (auto it = s.begin(); it != s.end(); ++it) {
                     /* Try and find this source in the list of nodes
                      * that we know about. */
-                    auto s = node::lookup(n, *it);
+                    auto s = node::lookup(n, *it, node_func);
                     if (s == NULL) {
                         fprintf(stderr, "Unable to parse node: '%s'\n",
                                 (*it).c_str());
@@ -807,6 +829,26 @@ namespace libflo {
                                                  op,
                                                  s);
                 return std::shared_ptr<operation<node_t>>(ptr);
+            }
+
+        /* A default function for creating a new node, which can be
+         * overridder by the user in case they need more information
+         * to construct their class. */
+        static node_ptr default_node_func(const std::string name,
+                                          const unknown<size_t>& width,
+                                          const unknown<size_t>& depth,
+                                          bool is_mem,
+                                          bool is_const,
+                                          unknown<size_t> dfdepth,
+                                          const unknown<std::string>& posn)
+            {
+                return std::make_shared<node_t>(name,
+                                                width,
+                                                depth,
+                                                is_mem,
+                                                is_const,
+                                                dfdepth,
+                                                posn);
             }
     };
 }
