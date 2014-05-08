@@ -69,24 +69,6 @@ namespace libflo {
             { return _ops; }
         const std::vector<node_ptr>& nodes(void) const { return _node_vec; }
 
-
-        /* Parses the given file as a Flo file. */
-        static const std::shared_ptr<flo> parse(const std::string filename)
-            {
-                return parse_help<flo>(filename);
-            }
-
-        /* Creates a new, empty, Flo structure that can be filled in
-         * later.  Note that I didn't make this a constructor because
-         * I didn't want to have an implicit empty constructor as this
-         * really shouldn't being used all that much... */
-        static std::shared_ptr<flo> empty(void)
-            {
-                std::map<std::string, node_ptr> nodes;
-                std::vector<operation_ptr> ops;
-                return std::shared_ptr<flo>(new flo(nodes, ops));
-            }
-
         /* Adds a node to the list of nodes. */
         void add_node(node_ptr n)
             {
@@ -119,6 +101,25 @@ namespace libflo {
             {
                 for (auto it = ops.begin(); it != ops.end(); ++it)
                     add_op(*it);
+            }
+
+    public:
+        /* Parses the given file as a Flo file. */
+        static const std::shared_ptr<flo>
+        parse(const std::string filename)
+            {
+                return parse_help<flo>(filename);
+            }
+
+        /* Creates a new, empty, Flo structure that can be filled in
+         * later.  Note that I didn't make this a constructor because
+         * I didn't want to have an implicit empty constructor as this
+         * really shouldn't being used all that much... */
+        static std::shared_ptr<flo> empty(void)
+            {
+                std::map<std::string, node_ptr> nodes;
+                std::vector<operation_ptr> ops;
+                return std::shared_ptr<flo>(new flo(nodes, ops));
             }
 
     protected:
