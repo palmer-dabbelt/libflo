@@ -45,6 +45,11 @@ namespace libflo {
     class node {
         template<class node_t, class op_t> friend class flo;
 
+#if 0
+        /* FIXME: This would make the code a whole lot prettier, but
+         * it appears that GCC 4.6 doesn't accept it.  Unfortunately
+         * this is the default on Ubuntu 12.04, which is a distro I'm
+         * trying to support. */
         template <class node_t>
         using create_func_t = 
             std::function<std::shared_ptr<node_t>(const std::string name,
@@ -55,6 +60,7 @@ namespace libflo {
                                                   unknown<size_t> dfdepth,
                                                   const unknown<std::string>&)
                           >;
+#endif
 
     private:
         const std::string _name;
@@ -135,7 +141,14 @@ namespace libflo {
         static std::shared_ptr<node_t>
         lookup(const std::map<std::string, std::shared_ptr<node_t> >& map,
                const std::string str,
-               create_func_t<node_t> create_func)
+               std::function<std::shared_ptr<node_t>(const std::string name,
+                                                     const unknown<size_t>& w,
+                                                     const unknown<size_t>& d,
+                                                     bool is_mem,
+                                                     bool is_const,
+                                                     unknown<size_t> dfdepth,
+                                                     const unknown<std::string>&)
+               > create_func)
             {
                 auto l = map.find(str);
                 if (l != map.end())
@@ -170,7 +183,14 @@ namespace libflo {
               const opcode& op_in,
               const unknown<size_t>& width,
               const std::vector<std::string>& s,
-              create_func_t<node_t> create_node)
+              std::function<std::shared_ptr<node_t>(const std::string name,
+                                                    const unknown<size_t>& w,
+                                                    const unknown<size_t>& d,
+                                                    bool is_mem,
+                                                    bool is_const,
+                                                    unknown<size_t> dfdepth,
+                                                    const unknown<std::string>&)
+              > create_node)
             {
                 std::string d = dw;
                 unknown<std::string> posn;
@@ -328,7 +348,14 @@ namespace libflo {
         /* Generates a new constant-valued node. */
         template<class node_t>
         static std::shared_ptr<node_t> constant(const std::string name,
-                                                create_func_t<node_t> create_node)
+                                                std::function<std::shared_ptr<node_t>(const std::string name,
+                                                                                      const unknown<size_t>& w,
+                                                                                      const unknown<size_t>& d,
+                                                                                      bool is_mem,
+                                                                                      bool is_const,
+                                                                                      unknown<size_t> dfdepth,
+                                                                                      const unknown<std::string>&)
+                          > create_node)
             {
                 auto value = str2name(name);
                 auto width = str2width(name);
@@ -350,7 +377,14 @@ namespace libflo {
                                            const unknown<size_t>& width,
                                            const unknown<size_t>& dfdepth,
                                            const unknown<std::string>& posn,
-                                           create_func_t<node_t> create_node)
+                                           std::function<std::shared_ptr<node_t>(const std::string name,
+                                                                                 const unknown<size_t>& w,
+                                                                                 const unknown<size_t>& d,
+                                                                                 bool is_mem,
+                                                                                 bool is_const,
+                                                                                 unknown<size_t> dfdepth,
+                                                                                 const unknown<std::string>&)
+                          > create_node)
             {
                 return create_node(name,
                                    width,
@@ -367,7 +401,14 @@ namespace libflo {
                                            const unknown<size_t>& width,
                                            const unknown<size_t>& depth,
                                            const unknown<std::string>& posn,
-                                           create_func_t<node_t> create_node)
+                                           std::function<std::shared_ptr<node_t>(const std::string name,
+                                                                                 const unknown<size_t>& w,
+                                                                                 const unknown<size_t>& d,
+                                                                                 bool is_mem,
+                                                                                 bool is_const,
+                                                                                 unknown<size_t> dfdepth,
+                                                                                 const unknown<std::string>&)
+                          > create_node)
             {
                 return create_node(name,
                                    width,
