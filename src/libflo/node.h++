@@ -46,7 +46,7 @@ namespace libflo {
         const bool _is_mem;
         const bool _is_const;
         unknown<size_t> _dfdepth;
-        unknown<size_t> _x, _y;
+        unknown<std::string> _posn;
 
     protected:
         node(const std::string name,
@@ -55,8 +55,7 @@ namespace libflo {
              bool is_mem,
              bool is_const,
              unknown<size_t> dfdepth,
-             const unknown<size_t>& x,
-             const unknown<size_t>& y);
+             const unknown<std::string>& posn);
 
     public:
         /* Accessor functions. */
@@ -75,19 +74,15 @@ namespace libflo {
         size_t dfdepth(void) const { return _dfdepth.value(); }
         bool known_dfdepth(void) const { return _dfdepth.known(); }
 
-        bool pos_known(void) const { return _x.known() && _y.known(); }
-        size_t x(void) const { return _x.value(); }
-        size_t y(void) const { return _y.value(); }
-        std::pair<size_t, size_t> pos(void) const
-            { return std::make_pair(x(), y()); }
+        bool posn_known(void) const { return _posn.known(); }
+        const std::string& posn(void) const { return _posn.value(); }
 
         /* These access the unknown-type values, which are useful if
          * you want to copy them somewhere else. */
         const unknown<size_t>& width_u(void) const { return _width; }
         const unknown<size_t>& depth_u(void) const { return _depth; }
         const unknown<size_t>& dfdepth_u(void) const { return _dfdepth; }
-        const unknown<size_t>& x_u(void) const { return _x; }
-        const unknown<size_t>& y_u(void) const { return _y; }
+        const unknown<std::string>& posn_u(void) const { return _posn; }
 
         /* Updates a node with a new width -- this will fail if both
          * widths are known and they don't match. */
@@ -149,26 +144,19 @@ namespace libflo {
         parse(const std::string dw,
               const opcode& op_in,
               const unknown<size_t>& width,
-              const std::vector<std::string>& s,
-              int array_width, int array_height, bool dims_valid)
+              const std::vector<std::string>& s)
             {
                 std::string d = dw;
-                unknown<size_t> x, y;
+                unknown<std::string> posn;
 
-                /* If this node has been placed in continuous
-                 * coodinates then we need to convert those to proper
-                 * coordinates by multiplying by the array size. */
-                float dx, dy;
+                /* If this node has been placed on a particular tile
+                 * then store the name of that tile along with the
+                 * node. */
                 char buf[LINE_MAX];
-                if (sscanf(dw.c_str(), "%[^$]$%f,%f", buf, &dx, &dy) == 3) {
-                    if (dims_valid == false) {
-                        fprintf(stderr, "Requested dims but invalid\n");
-                        abort();
-                    }
-
+                char pbuf[LINE_MAX];
+                if (sscanf(dw.c_str(), "%[^\"]$\"%[^\"]\"", buf, pbuf) == 2) {
                     d = buf;
-                    x = ((dx + 1) / 2) * array_width;
-                    y = ((dy + 1) / 2) * array_height;
+                    posn = std::string(pbuf);
                 }
 
                 /* FIXME: Jonathan's placement tool outputs NOPs
@@ -186,7 +174,7 @@ namespace libflo {
                     return reg<node_t>(d,
                                        unknown<size_t>(1),
                                        unknown<size_t>(0),
-                                       x, y
+                                       posn
                         );
 
                     /* These operations simply produce a single bit as
@@ -198,7 +186,8 @@ namespace libflo {
                     return reg<node_t>(d,
                                        unknown<size_t>(1),
                                        unknown<size_t>(),
-                                       x, y);
+                                       posn
+                        );
 
                     /* These operations produce a variable output
                      * width but are always ready. */
@@ -207,7 +196,8 @@ namespace libflo {
                     return reg<node_t>(d,
                                        width,
                                        unknown<size_t>(0),
-                                       x, y);
+                                       posn
+                        );
 
                     /* These are "normal" nodes, which means their
                      * output width is specified directly by the
@@ -238,7 +228,8 @@ namespace libflo {
                     return reg<node_t>(d,
                                        width,
                                        unknown<size_t>(),
-                                       x, y);
+                                       posn
+                        );
                     break;
 
                     /* Some operations don't have their output width
@@ -249,7 +240,8 @@ namespace libflo {
                     return reg<node_t>(d,
                                        unknown<size_t>(),
                                        unknown<size_t>(),
-                                       x, y);
+                                       posn
+                        );
 
                     /* Memories are special: they have a depth
                      * paramater as well as a width parameter.  It's
@@ -259,16 +251,22 @@ namespace libflo {
                 case opcode::MEM:
                 {
                     if (s.size() == 0)
-                        return mem<node_t>(d, width, unknown<size_t>(),
-                                           x, y);
+                        return mem<node_t>(d,
+                                           width,
+                                           unknown<size_t>(),
+                                           posn
+                            );
 
                     long long depth = atoll(s[0].c_str());
                     if (depth == -1)
-                        return mem<node_t>(d, width, unknown<size_t>(),
-                                           x, y);
+                        return mem<node_t>(d,
+                                           width,
+                                           unknown<size_t>(),
+                                           posn
+                            );
 
                     size_t sd = (size_t)depth;
-                    auto m = mem<node_t>(d, width, sd, x, y);
+                    auto m = mem<node_t>(d, width, sd, posn);
                     m->update_dfdepth(0);
                     return m;
 
@@ -279,7 +277,8 @@ namespace libflo {
                     return reg<node_t>(d,
                                        unknown<size_t>(1),
                                        unknown<size_t>(0),
-                                       x, y);
+                                       posn
+                        );
 
                 /* These operations don't actually produce a node. */
                 case opcode::EAT:
@@ -306,8 +305,7 @@ namespace libflo {
                                                           false,
                                                           true,
                                                           unknown<size_t>(0),
-                                                          unknown<size_t>(),
-                                                          unknown<size_t>()
+                                                          unknown<std::string>()
                                                    ));
             }
 
@@ -316,8 +314,7 @@ namespace libflo {
         static std::shared_ptr<node_t> reg(const std::string name,
                                            const unknown<size_t>& width,
                                            const unknown<size_t>& dfdepth,
-                                           const unknown<size_t>& x,
-                                           const unknown<size_t>& y)
+                                           const unknown<std::string>& posn)
             {
                 return std::shared_ptr<node_t>(new node_t(name,
                                                           width,
@@ -325,8 +322,7 @@ namespace libflo {
                                                           false,
                                                           false,
                                                           dfdepth,
-                                                          x,
-                                                          y
+                                                          posn
                                                    ));
             }
 
@@ -334,8 +330,7 @@ namespace libflo {
         static std::shared_ptr<node_t> mem(const std::string name,
                                            const unknown<size_t>& width,
                                            const unknown<size_t>& depth,
-                                           const unknown<size_t>& x,
-                                           const unknown<size_t>& y)
+                                           const unknown<std::string>& posn)
             {
                 return std::shared_ptr<node_t>(new node_t(name,
                                                           width,
@@ -343,8 +338,7 @@ namespace libflo {
                                                           true,
                                                           false,
                                                           unknown<size_t>(),
-                                                          x,
-                                                          y
+                                                          posn
                                                    ));
             }
 

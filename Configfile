@@ -53,9 +53,6 @@ TESTSRC     += raw-apos_fixdecoupled.bash
 # These tests run against a (cached) version of Chisel
 TESTSRC     += chisel_counter-128.bash
 
-# These are placed in continuous coordinates
-TESTSRC     += dpos-des_mwe.bash
-
 # This is designed to run 
 LIBEXECS    += libflo/flo-memcheck
 DEPLIBS     += flo
