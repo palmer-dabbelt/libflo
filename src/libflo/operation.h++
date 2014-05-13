@@ -66,11 +66,20 @@ namespace libflo {
               _op(op),
               _s(s)
             {
+                sanity_check();
+            }
+
+    protected:
+        /* Runs some simple sanity checks for an operation.  This
+         * shouldn't need to be called by users as it's called from
+         * within the constructor. */
+        void sanity_check(void)
+            {
                 /* FIXME: Check that an array with the correct number
                  * of sources has been provided.  The fact that I'm
                  * not doing this can cause SEGVs, which is
                  * yucky... */
-                switch (op) {
+                switch (_op) {
                 case opcode::ADD:
                 case opcode::AND:
                 case opcode::ARSH:
