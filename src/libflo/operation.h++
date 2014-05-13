@@ -51,13 +51,13 @@ namespace libflo {
             )> node_create_func_t;
 
     private:
-        std::shared_ptr<node_t> _d;
+        const std::shared_ptr<node_t> _d;
         unknown<size_t> _width;
         const opcode _op;
         const std::vector<std::shared_ptr<node_t>> _s;
 
-    protected:
-        operation(std::shared_ptr<node_t>& dest,
+    public:
+        operation(const std::shared_ptr<node_t>& dest,
                   const unknown<size_t>& width,
                   const opcode& op,
                   const std::vector<std::shared_ptr<node_t>>& s)
