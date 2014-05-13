@@ -23,6 +23,7 @@
 #define LIBFLO__OPERATION_HXX
 
 #include "globals.h++"
+#include "node.h++"
 #include "sizet_printf.h++"
 #include "unknown.h++"
 #include <map>
