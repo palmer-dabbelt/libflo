@@ -87,6 +87,10 @@ namespace libflo {
              unknown<size_t> dfdepth,
              const unknown<std::string>& posn);
 
+        /* Creates a node with just a name and nothing else known
+         * about it. */
+        node(const std::string name);
+
     public:
         /* Accessor functions. */
         const std::string& name(void) const { return _name; }

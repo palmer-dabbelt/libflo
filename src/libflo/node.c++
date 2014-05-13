@@ -47,6 +47,17 @@ node::node(const std::string name,
 {
 }
 
+node::node(const std::string name)
+    : _name(name),
+      _width(libflo::unknown<size_t>()),
+      _depth(libflo::unknown<size_t>()),
+      _is_mem(false),
+      _is_const(false),
+      _dfdepth(libflo::unknown<size_t>()),
+      _posn(libflo::unknown<std::string>())
+{
+}
+
 void node::update_width(const unknown<size_t>& width)
 {
     /* Checks that if we do overwrite a width that it doesn't change
