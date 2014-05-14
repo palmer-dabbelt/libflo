@@ -112,6 +112,59 @@ namespace libflo {
                     add_op(*it);
             }
 
+        /* Re-canonicalizes an already existing Flo file.  Essentially
+         * this means re-inferring widths and such. */
+        void canon(void)
+            {
+                /* Infer the widths of everything. */
+                size_t old_remaining_unknowns = 0;
+                for (size_t i = 0; i < nodes().size(); ++i) {
+                    for (const auto& op: this->operations())
+                        op->try_infer_width();
+
+                    /* Check to see how many unknown widths still
+                     * remain -- if there's none then we're done with
+                     * this phase and can continue, otherwise attempt
+                     * to keep going. */
+                    size_t remaining_unknowns = 0;
+                    for (const auto& op: this->operations())
+                        for (const auto& node: op->operands())
+                            if (node->known_width() == false)
+                                remaining_unknowns++;
+
+                    if (remaining_unknowns == 0)
+                        break;
+
+                    if (remaining_unknowns == old_remaining_unknowns)
+                        break;
+                    old_remaining_unknowns = remaining_unknowns;
+                }
+
+                /* If we've made it this far then hopefully we know
+                 * the width of every operation -- if we don't then
+                 * bail out. */
+                {
+                    size_t remaining_unknows = 0;
+                    for (const auto& op: this->operations()) {
+                        for (const auto& node: op->operands()) {
+                            if (!node->known_width()) {
+                                fprintf(stderr, "Unable to infer '%s' in ",
+                                        node->name().c_str());
+                                op->writeln(stderr);
+                                remaining_unknows++;
+                            }
+                        }
+                    }
+
+                    if (remaining_unknows > 0) {
+                        fprintf(stderr, "Aborting with "
+                                SIZET_FORMAT " widths remaining\n",
+                                remaining_unknows);
+                        abort();
+                    }
+                }
+            }
+
     public:
         /* Parses the given file as a Flo file. */
         static const std::shared_ptr<flo>
