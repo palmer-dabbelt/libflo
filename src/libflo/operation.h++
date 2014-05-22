@@ -192,6 +192,9 @@ namespace libflo {
                 case opcode::IN:
                 case opcode::RND:
                 case opcode::RST:
+                    if (_width.known())
+                        must_be(0, _width.value());
+
                     must_match(std::vector<size_t>({0}));
                     if (o(0)->known_width())
                         _width = o(0)->width();
@@ -203,6 +206,9 @@ namespace libflo {
                 case opcode::MOV:
                 case opcode::NOT:
                 case opcode::OUT:
+                    if (_width.known())
+                        must_be(0, _width.value());
+
                     must_match(std::vector<size_t>({0, 1}));
                     if (o(0)->known_width())
                         _width = o(0)->width();
@@ -215,6 +221,9 @@ namespace libflo {
                 case opcode::REG:
                 case opcode::SUB:
                 case opcode::XOR:
+                    if (_width.known())
+                        must_be(0, _width.value());
+
                     must_match(std::vector<size_t>({0, 1, 2}),
                                _op == opcode::ADD);
                     if (o(0)->known_width())
@@ -228,6 +237,10 @@ namespace libflo {
                 case opcode::GTE:
                 case opcode::LT:
                 case opcode::NEQ:
+                    must_be(0, 1);
+                    if (_width.known())
+                        must_be(1, _width.value());
+
                     must_match(std::vector<size_t>({1, 2}));
                     if (o(1)->known_width())
                         _width = o(1)->width();
@@ -236,6 +249,9 @@ namespace libflo {
                     /* For MUXes, everything must match excpet for the first
                      * source, which is always a boolean. */
                 case opcode::MUX:
+                    if (_width.known())
+                        must_be(0, _width.value());
+
                     must_match(std::vector<size_t>({0, 2, 3}));
                     must_be(1, 1);
                     if (o(0)->known_width())
