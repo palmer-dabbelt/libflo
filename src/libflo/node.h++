@@ -63,7 +63,7 @@ namespace libflo {
 #endif
 
     private:
-        const std::string _name;
+        std::string _name;
         unknown<size_t> _width;
         unknown<size_t> _depth;
         const bool _is_mem;
@@ -124,6 +124,11 @@ namespace libflo {
 
         /* Updates a node with a new dfdepth, failing on mismatch. */
         void update_dfdepth(const unknown<size_t>& dfdepth);
+
+        /* Changes the name of a node.  Note that this is a dangerous
+         * operation, as there are probably going to be a bunch of
+         * node hashes floating around! */
+        void update_name(const std::string& name) { _name = name; }
 
         /* Returns the value of this constant, parsed as an integer. */
         int const_int(void) const;
