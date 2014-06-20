@@ -263,6 +263,7 @@ namespace libflo {
                 case opcode::ADD:
                 case opcode::AND:
                 case opcode::ARSH:
+                case opcode::DIV:
                 case opcode::LD:
                 case opcode::LIT:
                 case opcode::LOG2:

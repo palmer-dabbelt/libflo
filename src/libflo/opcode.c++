@@ -105,6 +105,8 @@ enum opcode libflo::string_to_opcode(const std::string op)
         return opcode::RD;
     } else if (str_starts(op, "wr")) {
         return opcode::WR;
+    } else if (str_starts(op, "div")) {
+        return opcode::DIV;
     } else {
         fprintf(stderr, "Unable to parse operation '%s'\n", op.c_str());
         abort();
@@ -150,6 +152,7 @@ const std::string libflo::opcode_to_string(enum opcode op)
     case opcode::NEG:  return std::move(std::string("neg"));
     case opcode::RD:   return std::move(std::string("rd"));
     case opcode::WR:   return std::move(std::string("wr"));
+    case opcode::DIV:  return std::move(std::string("div"));
     }
 
     fprintf(stderr, "Reached the end of a switch...\n");

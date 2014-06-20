@@ -86,6 +86,7 @@ namespace libflo {
                 case opcode::ARSH:
                 case opcode::CAT:
                 case opcode::CATD:
+                case opcode::DIV:
                 case opcode::EAT:
                 case opcode::EQ:
                 case opcode::GTE:
@@ -217,6 +218,7 @@ namespace libflo {
                     /* 2-source ALU operations (sources match dest) */
                 case opcode::ADD:
                 case opcode::AND:
+                case opcode::DIV:
                 case opcode::OR:
                 case opcode::REG:
                 case opcode::SUB:
@@ -414,6 +416,7 @@ namespace libflo {
 
                 case opcode::ADD:
                 case opcode::AND:
+                case opcode::DIV:
                 case opcode::OR:
                 case opcode::SUB:
                 case opcode::XOR:
@@ -796,6 +799,7 @@ namespace libflo {
                 case opcode::ARSH:
                 case opcode::CAT:
                 case opcode::CATD:
+                case opcode::DIV:
                 case opcode::EQ:
                 case opcode::GTE:
                 case opcode::IN:
