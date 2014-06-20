@@ -781,6 +781,18 @@ namespace libflo {
                      * that we know about. */
                     auto s = node::lookup(n, *it, node_func);
                     if (s == NULL) {
+                        /* FIXME: Chisel outputs some bad code, so we
+                         * just work around it here. */
+                        if (op == opcode::MOV) {
+                            fprintf(stderr, "WARNING: Chisel Bug.\n");
+                            fprintf(stderr, "  '%s = mov %s' emited\n",
+                                    d.c_str(), (*it).c_str());
+                            fprintf(stderr, "  Assuming '%s' also not used\n",
+                                    d.c_str());
+                            fprintf(stderr, "  Continuing parse, might fail\n");
+                            return NULL;
+                        }
+
                         fprintf(stderr, "Unable to parse node: '%s'\n",
                                 (*it).c_str());
                         abort();
