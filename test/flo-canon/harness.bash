@@ -30,16 +30,25 @@ cat $TEST.in
 $PTEST_BINARY $TEST.in > $TEST.out
 
 cat $TEST.out | sort > $TEST.out.sort
-cat $TEST.gold | sort > $TEST.gold.sort
+if [[ "$NODIFF" != "true" ]]
+then
+    cat $TEST.gold | sort > $TEST.gold.sort
+fi
 
 cat $TEST.out
-cat $TEST.gold
-
-diff -au $TEST.gold.sort $TEST.out.sort
-out="$?"
-if [[ "$out" != "0" ]]
+if [[ "$NODIFF" != "true" ]]
 then
-    exit "$out"
+    cat $TEST.gold
+fi
+
+if [[ "$NODIFF" != "true" ]]
+then
+    diff -au $TEST.gold.sort $TEST.out.sort
+    out="$?"
+    if [[ "$out" != "0" ]]
+    then
+        exit "$out"
+    fi
 fi
 
 # Run a second test, ensuring that libflo can parse its own output
@@ -74,17 +83,14 @@ then
     exit 1
 fi
 
-cat $TEST.out | sort > $TEST.out.sort
-cat $TEST.gold | sort > $TEST.gold.sort
-
-cat test.out
-cat test.gold
-
-diff -au $TEST.gold.sort $TEST.out.sort
-out="$?"
-if [[ "$out" != "0" ]]
+if [[ "$NODIFF" != "true" ]]
 then
-    exit "$out"
+    diff -au $TEST.gold.sort $TEST.out.sort
+    out="$?"
+    if [[ "$out" != "0" ]]
+    then
+        exit "$out"
+    fi
 fi
 
 # Run a second test, ensuring that libflo can parse its own output
