@@ -49,6 +49,7 @@ TESTSRC     += raw-apos_regshift.bash
 TESTSRC     += raw-apos_negwidth.bash
 TESTSRC     += raw-apos_badwidth.bash
 TESTSRC     += raw-apos_fixdecoupled.bash
+TESTSRC     += raw-apos_rv32-1stage.bash
 
 # These tests run against a (cached) version of Chisel
 TESTSRC     += chisel_counter-128.bash
