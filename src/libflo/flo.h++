@@ -234,7 +234,8 @@ namespace libflo {
 
                     char buffer[LINE_MAX];
                     while (fgets(buffer, LINE_MAX, f) != NULL)
-                        lines.push_back(filenode::parse(buffer));
+                        if (strlen(buffer) > 2)
+                            lines.push_back(filenode::parse(buffer));
                 }
 
                 /* The first thing we need to do is produce a
