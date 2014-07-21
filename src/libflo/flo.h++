@@ -264,6 +264,7 @@ namespace libflo {
                  * actually producing the operation structures, here
                  * we handle generating nodes for every constant. */
                 std::vector<operation_ptr> ops;
+                std::map<std::string, bool> invalid_nodes;
                 for (auto it = lines.begin(); it != lines.end(); ++it) {
                     auto line = *it;
                     auto op = operation_t::template parse<operation_t>(
@@ -274,8 +275,21 @@ namespace libflo {
                         line->s,
                         node_func
                         );
+
+                    /* FIXME: This is pretty nasty: essentially what
+                     * happens here is that operation::parse() can
+                     * return NULL for two reasons: either we had an
+                     * invalid operation OR we had an operation with
+                     * no associated libflo operation.  It turns out
+                     * the only non-libflo operations are MEM, so for
+                     * now we just hard-code that...  At some point I
+                     * think I should probably fix libflo (and maybe
+                     * flo?). */
                     if (op != NULL)
                         ops.push_back(op);
+                    else
+                        if (line->opcode != opcode::MEM)
+                            invalid_nodes[line->d] = true;
                 }
 
                 /* At this point we've got the operation list, but we
@@ -390,7 +404,18 @@ namespace libflo {
 
                 std::sort(ops.begin(), ops.end(), &operation_t::cmp_sched);
 
-                return std::shared_ptr<flo_t>(new flo_t(nodes, ops));
+                /* Here we need to construct a new node list that has
+                 * only the valid nodes in it.  This works around a
+                 * Chisel bug where it emits some invalid nodes. */
+                std::map<std::string, std::shared_ptr<node_t>> valid_nodes;
+                for (const auto& node_pair: nodes) {
+                    auto node = node_pair.second;
+                    auto l = invalid_nodes.find(node->name());
+                    if (l == invalid_nodes.end() || l->second == false)
+                        valid_nodes[node->name()] = node;
+                }
+
+                return std::shared_ptr<flo_t>(new flo_t(valid_nodes, ops));
             }
     };
 }
