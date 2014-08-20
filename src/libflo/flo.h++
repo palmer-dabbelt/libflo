@@ -165,6 +165,23 @@ namespace libflo {
                 }
             }
 
+        /* Determines the top-level class name of a flo file. */
+        const std::string class_name(void) const
+            {
+                for (const auto& node: nodes()) {
+                    std::string name = node->name();
+                    size_t index = name.find(":");
+                    if (index == std::string::npos)
+                        continue;
+
+                    return name.substr(0, index);
+                }
+
+                fprintf(stderr, "Could not determine class name\n");
+                abort();
+                return "";
+            }
+
     public:
         /* Parses the given file as a Flo file. */
         static const std::shared_ptr<flo>
