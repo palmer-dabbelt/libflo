@@ -81,6 +81,21 @@ namespace libflo {
                  * not doing this can cause SEGVs, which is
                  * yucky... */
                 switch (_op) {
+                case opcode::RD:
+                    if (this->s()->is_const() == false) {
+                        fprintf(stderr, "Is that a read-enable?\n");
+                        writeln_debug(stderr);
+                        abort();
+                    }
+
+                    if (this->s()->const_int() != 1) {
+                        fprintf(stderr, "Is that a read-enable?\n");
+                        writeln_debug(stderr);
+                        abort();
+                    }
+
+                    break;
+
                 case opcode::ADD:
                 case opcode::AND:
                 case opcode::ARSH:
@@ -108,7 +123,6 @@ namespace libflo {
                 case opcode::NOT:
                 case opcode::OR:
                 case opcode::OUT:
-                case opcode::RD:
                 case opcode::REG:
                 case opcode::RND:
                 case opcode::RSH:
