@@ -76,10 +76,106 @@ namespace libflo {
          * within the constructor. */
         void sanity_check(void)
             {
-                /* FIXME: Check that an array with the correct number
-                 * of sources has been provided.  The fact that I'm
-                 * not doing this can cause SEGVs, which is
-                 * yucky... */
+                /* Makes sure there's the correct number of operands
+                 * for each input. */
+                switch (_op) {
+                case opcode::IN:
+                case opcode::RND:
+                case opcode::RST:
+                    if (_s.size() != 0) {
+                        fprintf(stderr,
+                                "Node '%s' has %lu source operands, expected 0\n",
+                                _d->name().c_str(),
+                                _s.size()
+                            );
+                        abort();
+                    }
+
+                    break;
+
+                case opcode::LOG2:
+                case opcode::MEM:
+                case opcode::MOV:
+                case opcode::NEG:
+                case opcode::NOT:
+                case opcode::OUT:
+                    if (_s.size() != 1) {
+                        fprintf(stderr,
+                                "Node '%s' has %lu source operands, expected 1\n",
+                                _d->name().c_str(),
+                                _s.size()
+                            );
+                        abort();
+                    }
+
+                    break;
+
+                case opcode::ADD:
+                case opcode::AND:
+                case opcode::ARSH:
+                case opcode::CAT:
+                case opcode::CATD:
+                case opcode::DIV:
+                case opcode::EQ:
+                case opcode::GTE:
+                case opcode::LSH:
+                case opcode::LT:
+                case opcode::MUL:
+                case opcode::NEQ:
+                case opcode::OR:
+                case opcode::REG:
+                case opcode::RSH:
+                case opcode::RSHD:
+                case opcode::SUB:
+                case opcode::XOR:
+                    if (_s.size() != 2) {
+                        fprintf(stderr,
+                                "Node '%s' has %lu source operands, expected 2\n",
+                                _d->name().c_str(),
+                                _s.size()
+                            );
+                        abort();
+                    }
+
+                    break;
+
+                case opcode::INIT:
+                case opcode::MUX:
+                case opcode::RD:
+                    if (_s.size() != 3) {
+                        fprintf(stderr,
+                                "Node '%s' has %lu source operands, expected 3\n",
+                                _d->name().c_str(),
+                                _s.size()
+                            );
+                        abort();
+                    }
+
+                    break;
+
+                case opcode::WR:
+                    if (_s.size() != 4) {
+                        fprintf(stderr,
+                                "Node '%s' has %lu source operands, expected 4\n",
+                                _d->name().c_str(),
+                                _s.size()
+                            );
+                        abort();
+                    }
+
+                    break;
+
+                case opcode::EAT:
+                case opcode::LD:
+                case opcode::LIT:
+                case opcode::MSK:
+                case opcode::NOP:
+                case opcode::ST:
+                    break;
+                }
+
+                /* Some nodes have a few special constraints, which
+                 * are checked here. */
                 switch (_op) {
                 case opcode::RD:
                     if (this->s()->is_const() == false) {
