@@ -84,9 +84,9 @@ namespace libflo {
                 case opcode::RST:
                     if (_s.size() != 0) {
                         fprintf(stderr,
-                                "Node '%s' has %lu source operands, expected 0\n",
+                                "Node '%s' has %d source operands, expected 0\n",
                                 _d->name().c_str(),
-                                _s.size()
+                                (int)_s.size()
                             );
                         abort();
                     }
@@ -101,9 +101,9 @@ namespace libflo {
                 case opcode::OUT:
                     if (_s.size() != 1) {
                         fprintf(stderr,
-                                "Node '%s' has %lu source operands, expected 1\n",
+                                "Node '%s' has %d source operands, expected 1\n",
                                 _d->name().c_str(),
-                                _s.size()
+                                (int)_s.size()
                             );
                         abort();
                     }
@@ -130,9 +130,9 @@ namespace libflo {
                 case opcode::XOR:
                     if (_s.size() != 2) {
                         fprintf(stderr,
-                                "Node '%s' has %lu source operands, expected 2\n",
+                                "Node '%s' has %d source operands, expected 2\n",
                                 _d->name().c_str(),
-                                _s.size()
+                                (int)_s.size()
                             );
                         abort();
                     }
@@ -144,9 +144,9 @@ namespace libflo {
                 case opcode::RD:
                     if (_s.size() != 3) {
                         fprintf(stderr,
-                                "Node '%s' has %lu source operands, expected 3\n",
+                                "Node '%s' has %d source operands, expected 3\n",
                                 _d->name().c_str(),
-                                _s.size()
+                                (int)_s.size()
                             );
                         abort();
                     }
@@ -156,9 +156,9 @@ namespace libflo {
                 case opcode::WR:
                     if (_s.size() != 4) {
                         fprintf(stderr,
-                                "Node '%s' has %lu source operands, expected 4\n",
+                                "Node '%s' has %d source operands, expected 4\n",
                                 _d->name().c_str(),
-                                _s.size()
+                                (int)_s.size()
                             );
                         abort();
                     }
