@@ -1,0 +1,2 @@
+Remove the LINE_MAX macro, replace it with C++ string handling (so
+dynamic allocation).
