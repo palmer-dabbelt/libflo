@@ -25,7 +25,7 @@
 using namespace libflo;
 
 #ifndef LINE_MAX
-#define LINE_MAX 1024
+#define LINE_MAX 10240
 #endif
 
 /* Searches for a short string at the start of a long string. */

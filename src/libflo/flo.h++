@@ -33,7 +33,7 @@
 #include <vector>
 
 #ifndef LINE_MAX
-#define LINE_MAX 1024
+#define LINE_MAX 10240
 #endif
 
 namespace libflo {

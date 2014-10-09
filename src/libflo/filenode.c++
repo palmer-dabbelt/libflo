@@ -23,7 +23,7 @@
 using namespace libflo;
 
 #ifndef LINE_MAX
-#define LINE_MAX 1024
+#define LINE_MAX 10240
 #endif
 
 filenode::filenode(const std::string _d, const std::string op_width,
