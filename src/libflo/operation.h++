@@ -600,7 +600,14 @@ namespace libflo {
                     return;
                 }
 
-                fprintf(f, "%s = ", _d->name().c_str());
+                if (_d->posn_known() == true) {
+                    fprintf(f, "%s@%s = ",
+                            _d->name().c_str(),
+                            _d->posn().c_str()
+                        );
+                } else {
+                    fprintf(f, "%s = ", _d->name().c_str());
+                }
 
                 fprintf(f, "%s",
                         opcode_to_string(_op).c_str());
