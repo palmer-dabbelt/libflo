@@ -133,6 +133,9 @@ namespace libflo {
         /* Returns the value of this constant, parsed as an integer. */
         int const_int(void) const;
 
+        /* Installs this node at a particular position. */
+        void update_posn(const std::string& posn) { _posn = posn; }
+
     public:
         /* Parses an input string, which contains the combined
          * name+width (an optional width) for a node.  str2name
