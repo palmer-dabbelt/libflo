@@ -43,10 +43,10 @@ enum opcode libflo::string_to_opcode(const std::string op)
         return opcode::SUB;
     } else if (str_starts(op, "and")) {
         return opcode::AND;
-    } else if (str_starts(op, "lt")) {
-        return opcode::LT;
     } else if (str_starts(op, "lte")) {
         return opcode::LTE;
+    } else if (str_starts(op, "lt")) {
+        return opcode::LT;
     } else if (str_starts(op, "not")) {
         return opcode::NOT;
     } else if (str_starts(op, "reg")) {
@@ -91,10 +91,10 @@ enum opcode libflo::string_to_opcode(const std::string op)
         return opcode::MEM;
     } else if (str_starts(op, "out")) {
         return opcode::OUT;
-    } else if (str_starts(op, "gt")) {
-        return opcode::GT;
     } else if (str_starts(op, "gte")) {
         return opcode::GTE;
+    } else if (str_starts(op, "gt")) {
+        return opcode::GT;
     } else if (str_starts(op, "mov")) {
         return opcode::MOV;
     } else if (str_starts(op, "nop")) {
