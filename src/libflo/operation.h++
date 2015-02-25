@@ -117,9 +117,11 @@ namespace libflo {
                 case opcode::CATD:
                 case opcode::DIV:
                 case opcode::EQ:
+                case opcode::GT:
                 case opcode::GTE:
                 case opcode::LSH:
                 case opcode::LT:
+                case opcode::LTE:
                 case opcode::MUL:
                 case opcode::NEQ:
                 case opcode::OR:
@@ -215,6 +217,7 @@ namespace libflo {
                 case opcode::DIV:
                 case opcode::EAT:
                 case opcode::EQ:
+                case opcode::GT:
                 case opcode::GTE:
                 case opcode::IN:
                 case opcode::INIT:
@@ -223,6 +226,7 @@ namespace libflo {
                 case opcode::LOG2:
                 case opcode::LSH:
                 case opcode::LT:
+                case opcode::LTE:
                 case opcode::MEM:
                 case opcode::MOV:
                 case opcode::MSK:
@@ -362,6 +366,8 @@ namespace libflo {
                 case opcode::EQ:
                 case opcode::GTE:
                 case opcode::LT:
+                case opcode::GT:
+                case opcode::LTE:
                 case opcode::NEQ:
                     must_be(0, 1);
                     if (_width.known())
@@ -546,7 +552,9 @@ namespace libflo {
                 case opcode::XOR:
                 case opcode::EQ:
                 case opcode::GTE:
+                case opcode::GT:
                 case opcode::LT:
+                case opcode::LTE:
                 case opcode::NEQ:
                 case opcode::MUL:
                 case opcode::CAT:
@@ -944,6 +952,7 @@ namespace libflo {
                 case opcode::CATD:
                 case opcode::DIV:
                 case opcode::EQ:
+                case opcode::GT:
                 case opcode::GTE:
                 case opcode::IN:
                 case opcode::INIT:
@@ -952,6 +961,7 @@ namespace libflo {
                 case opcode::LOG2:
                 case opcode::LSH:
                 case opcode::LT:
+                case opcode::LTE:
                 case opcode::MOV:
                 case opcode::MSK:
                 case opcode::MUL:

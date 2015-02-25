@@ -241,6 +241,8 @@ namespace libflo {
                 case opcode::EQ:
                 case opcode::GTE:
                 case opcode::LT:
+                case opcode::GT:
+                case opcode::LTE:
                 case opcode::NEQ:
                     return reg<node_t>(d,
                                        unknown<size_t>(1),

@@ -45,6 +45,8 @@ enum opcode libflo::string_to_opcode(const std::string op)
         return opcode::AND;
     } else if (str_starts(op, "lt")) {
         return opcode::LT;
+    } else if (str_starts(op, "lte")) {
+        return opcode::LTE;
     } else if (str_starts(op, "not")) {
         return opcode::NOT;
     } else if (str_starts(op, "reg")) {
@@ -89,6 +91,8 @@ enum opcode libflo::string_to_opcode(const std::string op)
         return opcode::MEM;
     } else if (str_starts(op, "out")) {
         return opcode::OUT;
+    } else if (str_starts(op, "gt")) {
+        return opcode::GT;
     } else if (str_starts(op, "gte")) {
         return opcode::GTE;
     } else if (str_starts(op, "mov")) {
@@ -153,6 +157,8 @@ const std::string libflo::opcode_to_string(enum opcode op)
     case opcode::RD:   return std::move(std::string("rd"));
     case opcode::WR:   return std::move(std::string("wr"));
     case opcode::DIV:  return std::move(std::string("div"));
+    case opcode::LTE:  return std::move(std::string("lte"));
+    case opcode::GT:   return std::move(std::string("gt"));
     }
 
     fprintf(stderr, "Reached the end of a switch...\n");
