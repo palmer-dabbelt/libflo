@@ -70,14 +70,14 @@ EOF
 
 cat >test.gold <<EOF
 reset = rst'1
-test::r.0 = reg'32 1'32 test::r__update.0
-test::r.1 = reg'32 1'32 test::r__update.1
-test::r.2 = reg'32 1'32 test::r__update.2
-test::r.3 = reg'32 1'32 test::r__update.3
-test::r.4 = reg'32 1'32 test::r__update.4
-test::r.5 = reg'32 1'32 test::r__update.5
-test::r.6 = reg'32 1'32 test::r__update.6
-test::r.7 = reg'26 1'26 test::r__update.7
+test::r.0 = reg'32 1'1 test::r__update.0
+test::r.1 = reg'32 1'1 test::r__update.1
+test::r.2 = reg'32 1'1 test::r__update.2
+test::r.3 = reg'32 1'1 test::r__update.3
+test::r.4 = reg'32 1'1 test::r__update.4
+test::r.5 = reg'32 1'1 test::r__update.5
+test::r.6 = reg'32 1'1 test::r__update.6
+test::r.7 = reg'26 1'1 test::r__update.7
 test::r.c0 = mov'32 test::r__update.0
 test::r.c1 = catd'32 test::r__update.1 test::r.c0
 test::r.c2 = catd'64 test::r__update.2 test::r.c1

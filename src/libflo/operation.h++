@@ -194,21 +194,6 @@ namespace libflo {
 
                     break;
 
-                case opcode::REG:
-                    if (this->s()->is_const() == false) {
-                        fprintf(stderr, "Is that a register init?\n");
-                        writeln_debug(stderr);
-                        abort();
-                    }
-
-                    if (this->s()->const_int() != 1) {
-                        fprintf(stderr, "Is that a register init?\n");
-                        writeln_debug(stderr);
-                        abort();
-                    }
-                    
-                    break;
-
                 case opcode::ADD:
                 case opcode::AND:
                 case opcode::ARSH:
@@ -238,6 +223,7 @@ namespace libflo {
                 case opcode::NOT:
                 case opcode::OR:
                 case opcode::OUT:
+                case opcode::REG:
                 case opcode::RND:
                 case opcode::RSH:
                 case opcode::RSHD:
@@ -348,7 +334,6 @@ namespace libflo {
                 case opcode::AND:
                 case opcode::DIV:
                 case opcode::OR:
-                case opcode::REG:
                 case opcode::SUB:
                 case opcode::XOR:
                     if (_width.known())
@@ -427,6 +412,22 @@ namespace libflo {
 
                 case opcode::LD:
                 case opcode::ST:
+                    break;
+
+                    /* Registers have a special rule:  */
+                case opcode::REG:
+                    must_match(std::vector<size_t>({0, 2}));
+                    if (o(0)->known_width())
+                        _width = o(0)->width();
+                    if (o(2)->known_width())
+                        _width = o(2)->width();
+
+                    must_be(1, 1);
+
+                    if (_width.known()) {
+                        must_be(0, _width.value());
+                        must_be(2, _width.value());
+                    }
                     break;
 
                     /* FIXME: I don't think there's anything we can do

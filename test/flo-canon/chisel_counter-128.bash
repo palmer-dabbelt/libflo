@@ -33,7 +33,7 @@ cat >test.gold <<EOF
 reset = rst'1
 T0 = add'128 test::r 1'128
 test::r__update = mux'128 reset 0'128 T0
-test::r = reg'128 1'128 test::r__update
+test::r = reg'128 1'1 test::r__update
 test::io_o = out'128 test::r
 EOF
 
