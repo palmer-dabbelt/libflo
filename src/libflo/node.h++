@@ -455,7 +455,7 @@ namespace libflo {
 
                 int64_t ll = atoll(value.c_str());
                 uint64_t ull = ll;
-                ull &= ((1 << width.value()) - 1);
+                ull &= ((1ULL << width.value()) - 1);
                 return std::to_string(ull);
             }
     };
