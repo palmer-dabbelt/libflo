@@ -44,6 +44,7 @@ TESTSRC     += raw-slash_counter-32-known.bash
 TESTSRC     += raw-slash_counter-250-mwe.bash
 TESTSRC     += raw-slash_mem.bash
 TESTSRC     += raw-slash_counter-5-enable.bash
+TESTSRC     += raw-slash_arsh-counter.bash
 
 # Some hand-written tests that use the new file format with 's
 TESTSRC     += raw-apos_regshift.bash
